@@ -112,3 +112,56 @@ public abstract class Figura {
 }
 
 
+
+
+
+
+package ui;
+import model.Controller;
+import java.util.Scanner;
+public class FigurApp{
+    
+    private Controller miControl;
+    private Scanner lector;
+
+    //methods
+    public FigurApp(){
+        miControl=new Controller();
+        lector=new Scanner(System.in);
+    }
+
+    public static void main(String[] args){
+         FigurApp obj=new FigurApp();
+         obj.addCirculo();
+         obj.addCuadrado();
+         obj.addCuadrado();
+         obj.mostrar();
+         obj.mostrarSumaCuadrados();
+    }
+
+    public void addCirculo(){
+        System.out.println("Digite el radio:");
+        int radio=lector.nextInt();
+        lector.nextLine();
+        miControl.addCirculo(radio);
+    }
+
+    public void addCuadrado(){
+        System.out.println("Digite el lado del Cuadrado:");
+        int lado=lector.nextInt();
+        lector.nextLine();
+        miControl.addCuadrado(lado);
+    }
+
+    public void mostrar(){
+        String mensaje=miControl.mostrarAreas();
+        System.out.println(mensaje);
+    }
+
+    public void mostrarSumaCuadrados(){
+        String mensaje=miControl.mostrarSumaCuadrados();
+        System.out.println(mensaje);
+    }
+}
+
+
