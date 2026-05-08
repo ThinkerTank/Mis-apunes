@@ -71,4 +71,29 @@ public class Controller{
     
 }
 
+package model;
+public class Cuadrado extends Figura {
+    //atributos
+    private int lado;
+
+    //metodos
+    public Cuadrado (int l){
+        lado=l;
+    }
+
+    public int getLado(){
+        return lado;
+    }
+
+    @Override
+    public double area(){
+        return (lado*lado);
+    }
+
+    @Override 
+    public String toString(){
+       return "El cuadrado con lado igual a:"+lado;
+    }
+}
+
 
