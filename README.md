@@ -97,3 +97,18 @@ public class Cuadrado extends Figura {
 }
 
 
+package model;
+public abstract class Figura {
+
+    // metodos
+    public Figura(){
+
+    }
+
+    public double area(){
+        return 0;
+    }
+
+}
+
+
