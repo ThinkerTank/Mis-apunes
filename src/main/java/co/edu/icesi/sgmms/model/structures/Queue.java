@@ -38,7 +38,7 @@ public class Queue<T> implements Iterable<T>, Serializable {
      */
     public T dequeue() {
         if (items.isEmpty()) {
-            throw new EmptyStructureException("Cannot dequeue: the queue is empty");
+            throw new EmptyStructureException("La cola está vacía");
         }
         return items.removeFirst();
     }
@@ -52,7 +52,7 @@ public class Queue<T> implements Iterable<T>, Serializable {
      */
     public T front() {
         if (items.isEmpty()) {
-            throw new EmptyStructureException("The queue is empty");
+            throw new EmptyStructureException("La cola está vacía");
         }
         return items.getFirst();
     }

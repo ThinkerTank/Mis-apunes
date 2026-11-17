@@ -80,7 +80,7 @@ public class PriorityQueue<T> implements Serializable {
      */
     public T peekMax() {
         if (size == 0) {
-            throw new EmptyStructureException("The priority queue is empty");
+            throw new EmptyStructureException("La cola de prioridad está vacía");
         }
         return elementAt(0);
     }

@@ -35,10 +35,10 @@ public class OperatorNavigator implements Serializable {
     public Movement move(Direction direction, long minute) {
         Position target = position.step(direction);
         if (!map.isInside(target)) {
-            throw new InvalidMovementException("You cannot leave the map: " + target + " is outside the city limits");
+            throw new InvalidMovementException("No puede salir del mapa: " + target + " está fuera de los límites de la ciudad");
         }
         if (!map.canEnter(target)) {
-            throw new InvalidMovementException("There is an obstacle at " + target);
+            throw new InvalidMovementException("Hay un obstáculo en " + target);
         }
         Movement movement = new Movement(position, target, direction, minute);
         history.push(movement);
@@ -55,7 +55,7 @@ public class OperatorNavigator implements Serializable {
      */
     public Movement undo() {
         if (history.isEmpty()) {
-            throw new EmptyStructureException("There are no movements to undo");
+            throw new EmptyStructureException("No hay movimientos para deshacer");
         }
         Movement movement = history.pop();
         position = movement.getFrom();

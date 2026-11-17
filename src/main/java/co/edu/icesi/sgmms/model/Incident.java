@@ -58,10 +58,10 @@ public class Incident implements Serializable {
      */
     public void markInProgress(String vehicleId, long minute) {
         if (status == IncidentStatus.RESOLVED) {
-            throw new InvalidIncidentStateException("Incident " + id + " is already resolved and cannot receive vehicles");
+            throw new InvalidIncidentStateException("El incidente " + id + " ya está resuelto y no puede recibir vehículos");
         }
         if (status == IncidentStatus.IN_PROGRESS) {
-            throw new InvalidIncidentStateException("Incident " + id + " is already being attended by " + assignedVehicleId);
+            throw new InvalidIncidentStateException("El incidente " + id + " ya está siendo atendido por " + assignedVehicleId);
         }
         status = IncidentStatus.IN_PROGRESS;
         assignedVehicleId = vehicleId;
@@ -77,7 +77,7 @@ public class Incident implements Serializable {
      */
     public void markResolved(long minute) {
         if (status != IncidentStatus.IN_PROGRESS) {
-            throw new InvalidIncidentStateException("Incident " + id + " has no vehicle attending it");
+            throw new InvalidIncidentStateException("El incidente " + id + " no tiene un vehículo atendiéndolo");
         }
         status = IncidentStatus.RESOLVED;
         resolvedAtMinute = minute;

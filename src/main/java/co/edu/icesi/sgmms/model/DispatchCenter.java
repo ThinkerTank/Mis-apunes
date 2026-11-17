@@ -72,7 +72,7 @@ public class DispatchCenter implements Serializable {
         this.vehicles = vehicles;
         for (Vehicle vehicle : vehicles.all()) {
             if (!map.canEnter(vehicle.getPosition())) {
-                throw new InvalidMapException("Vehicle " + vehicle.getId() + " is not on a road: " + vehicle.getPosition());
+                throw new InvalidMapException("El vehículo " + vehicle.getId() + " no está sobre una vía: " + vehicle.getPosition());
             }
         }
         this.operator = new OperatorNavigator(map, map.getMonitoringCenter());
@@ -92,7 +92,7 @@ public class DispatchCenter implements Serializable {
     public synchronized Incident reportIncident(IncidentType type, Position position, Severity severity,
                                                 String description) {
         if (!map.canEnter(position)) {
-            throw new InvalidMapException("Incidents must happen on a traversable cell: " + position);
+            throw new InvalidMapException("Los incidentes deben ocurrir en una celda transitable: " + position);
         }
         sequence++;
         String id = String.format("INC-%04d", sequence);
@@ -208,12 +208,12 @@ public class DispatchCenter implements Serializable {
      */
     public synchronized AssignmentRecord attendNext() {
         if (attentionQueue.isEmpty()) {
-            throw new EmptyStructureException("There are no pending incidents to attend");
+            throw new EmptyStructureException("No hay incidentes pendientes por atender");
         }
         Incident top = attentionQueue.peekMax();
         Vehicle candidate = suggestFor(top);
         if (candidate == null) {
-            throw new VehicleNotAvailableException("No compatible vehicle is available for " + top.getId()
+            throw new VehicleNotAvailableException("No hay vehículos compatibles disponibles para " + top.getId()
                     + " (" + top.getType().getLabel() + ")");
         }
         attentionQueue.extractMax();
@@ -234,11 +234,11 @@ public class DispatchCenter implements Serializable {
     public synchronized void startAttention(String incidentId) {
         Incident incident = incidents.findById(incidentId);
         if (incident.getStatus() != IncidentStatus.IN_PROGRESS) {
-            throw new InvalidIncidentStateException("Incident " + incidentId + " has no vehicle on its way");
+            throw new InvalidIncidentStateException("El incidente " + incidentId + " no tiene un vehículo en camino");
         }
         Vehicle vehicle = vehicles.findById(incident.getAssignedVehicleId());
         if (vehicle.getStatus() != VehicleStatus.EN_ROUTE) {
-            throw new InvalidIncidentStateException("Vehicle " + vehicle.getId() + " is already attending");
+            throw new InvalidIncidentStateException("El vehículo " + vehicle.getId() + " ya está atendiendo");
         }
         vehicle.setPosition(incident.getPosition());
         arrive(vehicle, incident);
@@ -255,12 +255,12 @@ public class DispatchCenter implements Serializable {
     public synchronized ScoreBreakdown resolveIncident(String incidentId) {
         Incident incident = incidents.findById(incidentId);
         if (incident.getStatus() == IncidentStatus.PENDING) {
-            throw new InvalidIncidentStateException("Incident " + incidentId + " has no vehicle assigned yet");
+            throw new InvalidIncidentStateException("El incidente " + incidentId + " todavía no tiene vehículo asignado");
         }
         Vehicle vehicle = vehicles.findById(incident.getAssignedVehicleId());
         if (vehicle.getStatus() != VehicleStatus.ATTENDING) {
-            throw new InvalidIncidentStateException("Vehicle " + vehicle.getId() + " has not arrived yet ("
-                    + vehicle.remainingSteps() + " cells left)");
+            throw new InvalidIncidentStateException("El vehículo " + vehicle.getId() + " todavía no llega ("
+                    + vehicle.remainingSteps() + " celdas por recorrer)");
         }
         incident.markResolved(minute);
         ScoreBreakdown points = scoring.score(incident, assignments.get(incidentId), minute);
@@ -541,24 +541,24 @@ public class DispatchCenter implements Serializable {
 
     private AssignmentRecord assign(Incident incident, Vehicle vehicle, boolean removeFromAttentionQueue) {
         if (incident.getStatus() == IncidentStatus.RESOLVED) {
-            throw new InvalidIncidentStateException("Incident " + incident.getId() + " is resolved and cannot receive vehicles");
+            throw new InvalidIncidentStateException("El incidente " + incident.getId() + " está resuelto y no puede recibir vehículos");
         }
         if (incident.getStatus() == IncidentStatus.IN_PROGRESS) {
-            throw new InvalidIncidentStateException("Incident " + incident.getId() + " is already being attended by "
+            throw new InvalidIncidentStateException("El incidente " + incident.getId() + " ya está siendo atendido por "
                     + incident.getAssignedVehicleId());
         }
         if (!vehicle.isAvailable()) {
-            throw new VehicleNotAvailableException("Vehicle " + vehicle.getId() + " is not available ("
+            throw new VehicleNotAvailableException("El vehículo " + vehicle.getId() + " no está disponible ("
                     + vehicle.getStatus().getLabel() + ")");
         }
         if (!vehicle.canAttend(incident.getType())) {
-            throw new IncompatibleVehicleException("A " + vehicle.getType().getLabel().toLowerCase(Locale.ROOT)
-                    + " cannot attend a " + incident.getType().getLabel().toLowerCase(Locale.ROOT));
+            throw new IncompatibleVehicleException("Un(a) " + vehicle.getType().getLabel().toLowerCase(Locale.ROOT)
+                    + " no puede atender un " + incident.getType().getLabel().toLowerCase(Locale.ROOT));
         }
         ShortestPathResult<Position> fromIncident = routes().routesFrom(incident.getPosition());
         double chosenCost = fromIncident.distanceTo(vehicle.getPosition());
         if (chosenCost == Double.POSITIVE_INFINITY) {
-            throw new RouteUnavailableException("There is no open road from " + vehicle.getId() + " to " + incident.getId());
+            throw new RouteUnavailableException("No hay una vía abierta desde " + vehicle.getId() + " hasta " + incident.getId());
         }
         AllPairsResult<Position> matrix = routes().distanceMatrix();
         double chosenStructural = matrix.distance(vehicle.getPosition(), incident.getPosition());

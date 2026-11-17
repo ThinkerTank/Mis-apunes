@@ -50,6 +50,6 @@ public enum ZoneType {
                 return type;
             }
         }
-        throw new InvalidMapException("Unknown cell code " + code + " (valid codes are 0 to 4)");
+        throw new InvalidMapException("Código de celda desconocido " + code + " (los códigos válidos van de 0 a 4)");
     }
 }

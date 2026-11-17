@@ -26,7 +26,7 @@ public class VehicleRepository implements Serializable {
      */
     public void add(Vehicle vehicle) {
         if (byId.containsKey(vehicle.getId())) {
-            throw new IllegalArgumentException("Duplicate vehicle id " + vehicle.getId());
+            throw new IllegalArgumentException("El id de vehículo " + vehicle.getId() + " está repetido");
         }
         byId.put(vehicle.getId(), vehicle);
         inOrder.addLast(vehicle);
@@ -42,7 +42,7 @@ public class VehicleRepository implements Serializable {
     public Vehicle findById(String id) {
         Vehicle vehicle = byId.get(id);
         if (vehicle == null) {
-            throw new VehicleNotFoundException("There is no vehicle with id " + id);
+            throw new VehicleNotFoundException("No existe un vehículo con id " + id);
         }
         return vehicle;
     }

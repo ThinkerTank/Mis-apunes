@@ -112,7 +112,7 @@ public class LinkedList<T> implements Iterable<T>, Serializable {
      */
     public T removeFirst() {
         if (head == null) {
-            throw new EmptyStructureException("The list is empty");
+            throw new EmptyStructureException("La lista está vacía");
         }
         T value = head.value;
         head = head.next;
@@ -133,7 +133,7 @@ public class LinkedList<T> implements Iterable<T>, Serializable {
      */
     public T removeLast() {
         if (head == null) {
-            throw new EmptyStructureException("The list is empty");
+            throw new EmptyStructureException("La lista está vacía");
         }
         if (head == tail) {
             return removeFirst();
@@ -158,7 +158,7 @@ public class LinkedList<T> implements Iterable<T>, Serializable {
      */
     public T getFirst() {
         if (head == null) {
-            throw new EmptyStructureException("The list is empty");
+            throw new EmptyStructureException("La lista está vacía");
         }
         return head.value;
     }
@@ -172,7 +172,7 @@ public class LinkedList<T> implements Iterable<T>, Serializable {
      */
     public T getLast() {
         if (tail == null) {
-            throw new EmptyStructureException("The list is empty");
+            throw new EmptyStructureException("La lista está vacía");
         }
         return tail.value;
     }

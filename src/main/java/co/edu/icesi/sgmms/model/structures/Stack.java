@@ -37,7 +37,7 @@ public class Stack<T> implements Iterable<T>, Serializable {
      */
     public T pop() {
         if (items.isEmpty()) {
-            throw new EmptyStructureException("Cannot pop: the stack is empty");
+            throw new EmptyStructureException("La pila está vacía");
         }
         return items.removeFirst();
     }
@@ -51,7 +51,7 @@ public class Stack<T> implements Iterable<T>, Serializable {
      */
     public T peek() {
         if (items.isEmpty()) {
-            throw new EmptyStructureException("Cannot peek: the stack is empty");
+            throw new EmptyStructureException("La pila está vacía");
         }
         return items.getFirst();
     }
