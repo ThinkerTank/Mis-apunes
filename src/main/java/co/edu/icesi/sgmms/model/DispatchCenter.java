@@ -510,6 +510,29 @@ public class DispatchCenter implements Serializable {
         return history.copy();
     }
 
+    /**
+     * Checks the invariants that tie the structures together: the BST and the hash index hold the
+     * same incidents, and the dispatch queue and the attention heap hold exactly the pending ones.
+     * Used by the concurrency tests.
+     *
+     * <p>Complexity — time: O(n²) in the worst case (queue membership checks); space: O(n).
+     */
+    public synchronized boolean isConsistent() {
+        if (!incidents.isConsistent()) {
+            return false;
+        }
+        int pending = 0;
+        for (Incident incident : incidents.activeByPriority()) {
+            if (incident.getStatus() == IncidentStatus.PENDING) {
+                pending++;
+                if (!dispatchQueue.contains(incident) || !attentionQueue.contains(incident)) {
+                    return false;
+                }
+            }
+        }
+        return dispatchQueue.size() == pending && attentionQueue.size() == pending;
+    }
+
     /** Lets other model components (the simulation) publish an event. */
     public synchronized void publish(SimulationEvent.Type type, String message) {
         record(type, message);
