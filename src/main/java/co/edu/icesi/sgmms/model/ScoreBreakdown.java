@@ -24,10 +24,12 @@ public class ScoreBreakdown implements Serializable {
         return Math.max(0, base + timeBonus + routingBonus - routingPenalty);
     }
 
+    /** Complexity — time O(1), space O(1). */
     public int getBase() {
         return base;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public int getTimeBonus() {
         return timeBonus;
     }

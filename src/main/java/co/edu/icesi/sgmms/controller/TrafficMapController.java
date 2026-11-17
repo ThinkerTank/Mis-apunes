@@ -69,6 +69,7 @@ public class TrafficMapController implements ScreenController {
     private Position pendingBlock;
     private String highlightedVehicle;
 
+    /** Complexity — time O(1) plus the legend (constant size); space O(1). */
     @Override
     public void init(AppContext appContext) {
         this.context = appContext;
@@ -99,6 +100,7 @@ public class TrafficMapController implements ScreenController {
         canvasHolder.requestFocus();
     }
 
+    /** Complexity — time O(W·H + n + m + c) to redraw the canvas, plus O(V + E) or O(E log V) when a layer must be recomputed after a topology change; space O(m + c). */
     @Override
     public void refresh() {
         DispatchCenter center = context.center();

@@ -16,6 +16,7 @@ public final class AccidentReport {
         this.involved = involved;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public AccidentCriterion getCriterion() {
         return criterion;
     }
@@ -29,7 +30,11 @@ public final class AccidentReport {
         return involved;
     }
 
-    /** Description stored in the incident. */
+    /**
+     * Description stored in the incident.
+     *
+     * <p>Complexity — time O(k) to print the k involved vehicles; space O(k).
+     */
     public String description() {
         return criterion.getDescription() + " (" + involved + ")";
     }

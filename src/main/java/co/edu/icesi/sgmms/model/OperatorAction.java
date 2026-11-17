@@ -38,10 +38,12 @@ public class OperatorAction implements Serializable {
         this.minute = minute;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public Type getType() {
         return type;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public String getDetail() {
         return detail;
     }

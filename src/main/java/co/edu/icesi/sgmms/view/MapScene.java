@@ -27,6 +27,7 @@ public final class MapScene {
     Position pendingBlock;
     String highlightedVehicle;
 
+    /** Complexity — time O(1), space O(1). */
     public MapScene map(CityMap value) {
         map = value;
         return this;
@@ -47,6 +48,7 @@ public final class MapScene {
         return this;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public MapScene vehicles(LinkedList<Vehicle> value) {
         vehicles = value;
         return this;

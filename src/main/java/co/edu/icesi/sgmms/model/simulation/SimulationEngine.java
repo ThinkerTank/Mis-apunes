@@ -49,7 +49,11 @@ public class SimulationEngine {
         this.millisPerMinute = Math.max(10, millisPerMinute);
     }
 
-    /** Starts the three threads. Calling it twice has no effect. */
+    /**
+     * Starts the three threads. Calling it twice has no effect.
+     *
+     * <p>Complexity — time O(1): creates and starts three threads; space O(1).
+     */
     public synchronized void start() {
         if (running) {
             return;
@@ -64,12 +68,20 @@ public class SimulationEngine {
         indicators.start();
     }
 
-    /** Freezes time; the operator can still assign, resolve and move. */
+    /**
+     * Freezes time; the operator can still assign, resolve and move.
+     *
+     * <p>Complexity — time O(1), space O(1).
+     */
     public void pause() {
         paused = true;
     }
 
-    /** Lets time run again after {@link #pause()}. */
+    /**
+     * Lets time run again after {@link #pause()}.
+     *
+     * <p>Complexity — time O(1) (wakes the waiting threads); space O(1).
+     */
     public void resume() {
         synchronized (pauseLock) {
             paused = false;
@@ -77,7 +89,11 @@ public class SimulationEngine {
         }
     }
 
-    /** Stops every thread and waits for them to finish. */
+    /**
+     * Stops every thread and waits for them to finish.
+     *
+     * <p>Complexity — O(1) work; waits up to 2 s for each of the three threads to end.
+     */
     public synchronized void stop() {
         if (!running) {
             return;

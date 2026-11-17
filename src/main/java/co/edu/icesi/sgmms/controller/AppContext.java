@@ -44,6 +44,8 @@ public class AppContext {
     /**
      * Replaces the current simulation (startup, loading a save or a new configuration). The old
      * engine is stopped; the new one starts paused so the operator can look around first.
+     *
+     * <p>Complexity — time O(h) to copy the h events of the saved history into the activity list; space O(h).
      */
     public void install(Simulation newSimulation) {
         if (engine != null) {
@@ -82,7 +84,11 @@ public class AppContext {
         refreshAll();
     }
 
-    /** Refreshes the header and every screen from the model (JavaFX thread only). */
+    /**
+     * Refreshes the header and every screen from the model (JavaFX thread only).
+     *
+     * <p>Complexity — time O(n + m + V + E) per call: every screen rebuilds itself from model snapshots (n incidents, m vehicles, BFS/DFS over the map).
+     */
     public void refreshAll() {
         if (simulation == null) {
             return;
@@ -95,7 +101,11 @@ public class AppContext {
         }
     }
 
-    /** Runs an operator action, shows its result, and turns any domain error into a message. */
+    /**
+     * Runs an operator action, shows its result, and turns any domain error into a message.
+     *
+     * <p>Complexity — the cost of {@code action} plus O(k) to drain k pending events and one full refresh.
+     */
     public void perform(String successMessage, Runnable action) {
         try {
             action.run();
@@ -110,12 +120,14 @@ public class AppContext {
         applyUpdate(simulation.getCenter().pollEvents());
     }
 
+    /** Complexity — time O(1), space O(1). */
     public void info(String message) {
         if (main != null) {
             main.showStatus(message, false);
         }
     }
 
+    /** Complexity — time O(1), space O(1). */
     public void error(String message) {
         if (main != null) {
             main.showStatus(message, true);

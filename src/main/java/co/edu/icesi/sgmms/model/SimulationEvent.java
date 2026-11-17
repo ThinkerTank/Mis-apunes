@@ -42,10 +42,12 @@ public class SimulationEvent implements Serializable {
         this.minute = minute;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public Type getType() {
         return type;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public String getMessage() {
         return message;
     }

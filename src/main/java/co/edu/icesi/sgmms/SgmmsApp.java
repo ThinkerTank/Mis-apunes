@@ -20,6 +20,7 @@ public class SgmmsApp extends Application {
 
     private MainController main;
 
+    /** Complexity — time O(V²), dominated by building the adjacency matrix of the configured map; space O(V²). */
     @Override
     public void start(Stage stage) throws Exception {
         Simulation simulation;
@@ -45,6 +46,7 @@ public class SgmmsApp extends Application {
         stage.show();
     }
 
+    /** Complexity — O(1) work; waits for the three simulation threads to finish (bounded by 2 s each). */
     @Override
     public void stop() {
         if (main != null) {
@@ -52,6 +54,7 @@ public class SgmmsApp extends Application {
         }
     }
 
+    /** Complexity — time O(1), space O(1). */
     public static void main(String[] args) {
         launch(args);
     }

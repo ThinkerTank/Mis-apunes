@@ -79,6 +79,8 @@ public class MainController {
      * Loads the three screens, installs the simulation and shows the monitoring center.
      *
      * @throws IOException if a view cannot be loaded
+     *
+     * <p>Complexity — time O(F) to parse the three FXML views plus the cost of installing the simulation; space O(F).
      */
     public void start(Scene scene, Simulation simulation) throws IOException {
         for (Screen screen : Screen.values()) {
@@ -101,7 +103,11 @@ public class MainController {
         showStatus("Simulación lista y en pausa. Pulse «Iniciar» para que corra el tiempo.", false);
     }
 
-    /** Shows one of the three scenarios. */
+    /**
+     * Shows one of the three scenarios.
+     *
+     * <p>Complexity — O(1) to swap the view, plus the refresh of that screen.
+     */
     public void show(Screen screen) {
         current = screen;
         content.getChildren().setAll(views[screen.ordinal()]);
@@ -131,6 +137,7 @@ public class MainController {
         statusTimer.playFromStart();
     }
 
+    /** Complexity — time O(1), space O(1). */
     public AppContext getContext() {
         return context;
     }
