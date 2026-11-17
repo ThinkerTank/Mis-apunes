@@ -1,0 +1,23 @@
+# Build output
+target/
+out/
+bin/
+*.class
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+nbproject/
+
+# Saved simulations produced at runtime
+saves/
+*.sgmms
+
+# OS and logs
+.DS_Store
+Thumbs.db
+*.log
