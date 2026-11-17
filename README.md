@@ -16,4 +16,6 @@ Tarea integradora 2026-2 de los cursos Algoritmos y Programación II, Computaci�
 
 Fórmulas: densidad de errores-fallos = total de fallos / total de pruebas; confiabilidad = 1 − densidad; completitud = casos de prueba / total de funcionalidades (35).
 
-_Se completan iteración por iteración._
+| Iteración | Commit medido | Alcance | Pruebas | Fallos | Densidad | Confiabilidad | Completitud |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `ddb4b080faf8d1cbbd0bf2309301325492a03e02` | LinkedList, Stack, Queue | 17 | 0 | 0.0000 | 1.0000 | 0.49 |
