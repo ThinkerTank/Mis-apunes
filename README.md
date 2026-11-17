@@ -29,3 +29,4 @@ Fórmulas: densidad de errores-fallos = total de fallos / total de pruebas; conf
 | 9 | `83e03921c8f8e1a9acb23da86e710b29fc7030de` | Serialización y concurrencia (3 hilos) | 139 | 0 | 0.0000 | 1.0000 | 3.97 |
 | 10 | `10066547863ccac5f58de42043b2b16e9a99c602` | Interfaz JavaFX MVC (3 escenarios), calibración de la simulación | 140 | 0 | 0.0000 | 1.0000 | 4.00 |
 | 11 | `f089350721db1a5bccb968902642c1b2f62c6b6b` | Prueba de reglas técnicas RT1 y RT5 (detecta 21 clases sin Javadoc de complejidad) | 142 | 1 | 0.0070 | 0.9930 | 4.06 |
+| 12 | `c451c27d1d6a0883658ae1e0b5fa7798960f001a` | Javadoc de complejidad en todas las clases (corrige la falla de la iteración 11) | 142 | 0 | 0.0000 | 1.0000 | 4.06 |
