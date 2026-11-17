@@ -22,3 +22,4 @@ Fórmulas: densidad de errores-fallos = total de fallos / total de pruebas; conf
 | 2 | `a7af55f2a1627041b7611ef61a0175dde9764928` | HashTable | 23 | 0 | 0.0000 | 1.0000 | 0.66 |
 | 3 | `92801d664c486b24033c86765a9af1068049ab65` | PriorityQueue, BinarySearchTree | 36 | 0 | 0.0000 | 1.0000 | 1.03 |
 | 4 | `42e48a1b4b6f46651e3360d0084bd641ee867643` | Grafo dual, BFS, DFS, Dijkstra, Floyd-Warshall, Prim, Kruskal | 71 | 0 | 0.0000 | 1.0000 | 2.03 |
+| 5 | `1a40cc31e5bfb2c5fb89787d4ea598d8d31ea1bf` | Mapa como grafo, incidentes, vehículos, repositorios, navegador | 91 | 0 | 0.0000 | 1.0000 | 2.60 |
