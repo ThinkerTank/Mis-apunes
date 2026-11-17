@@ -1,0 +1,40 @@
+@startuml secuencia-minuto
+title Secuencia — Un minuto de simulación (hilos concurrentes)
+skinparam shadowing false
+participant "sgmms-clock" as Clock
+participant "sgmms-generator" as GenT
+participant "sgmms-indicators" as IndT
+participant Simulation as Sim
+participant CivilianTraffic as Traffic
+participant AccidentDetector as AD
+participant IncidentGenerator as IG
+participant DispatchCenter as DC
+participant "JavaFX\nApplication Thread" as FX
+
+== cada minuto ==
+Clock -> Sim : clockTick()
+activate Sim
+Sim -> Traffic : step(map) → CarMove[]
+Sim -> DC : advanceMinute() (mueve vehículos, llegadas)
+Sim -> DC : updateTraffic(posiciones)
+note right of DC : congestión por distrito →\npesos del grafo de tráfico
+Sim -> AD : detect(map, moves, busy, minute, random)
+AD --> Sim : AccidentReport[]
+loop por cada accidente
+  Sim -> DC : reportIncident(ACCIDENT, lugar, gravedad)
+end
+deactivate Sim
+
+== medio minuto después ==
+GenT -> Sim : generationTick()
+activate Sim
+Sim -> IG : tick(center, settings, random, minute)
+IG -> DC : reportIncident(ROBBERY | FIRE, …)
+deactivate Sim
+
+== cada 250 ms ==
+IndT -> DC : indicators(), pollEvents()
+DC --> IndT : instantánea inmutable + eventos
+IndT -> FX : Platform.runLater(onUpdate)
+FX -> FX : refresca la pantalla activa
+@enduml

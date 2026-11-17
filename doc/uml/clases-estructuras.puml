@@ -1,0 +1,134 @@
+@startuml clases-estructuras
+title SGMMS — Estructuras de datos propias (co.edu.icesi.sgmms.model.structures)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+class LinkedList<T> {
+  - head : Node<T>
+  - tail : Node<T>
+  - size : int
+  + addFirst(e : T)
+  + addLast(e : T)
+  + insert(i : int, e : T)
+  + get(i : int) : T
+  + removeAt(i : int) : T
+  + remove(e : T) : boolean
+  + removeFirst() : T
+  + contains(e : T) : boolean
+  + filter(p : Predicate<T>) : LinkedList<T>
+  + sort(c : Comparator<T>)  // merge sort
+  + size() : int
+}
+class Stack<T> {
+  - items : LinkedList<T>
+  + push(e : T)
+  + pop() : T
+  + peek() : T
+  + isEmpty() : boolean
+}
+class Queue<T> {
+  - items : LinkedList<T>
+  + enqueue(e : T)
+  + dequeue() : T
+  + front() : T
+  + remove(e : T) : boolean
+}
+class HashTable<K,V> {
+  - buckets : Object[]
+  - size : int
+  + put(k : K, v : V)
+  + get(k : K) : V
+  + remove(k : K) : V
+  + containsKey(k : K) : boolean
+  + keys() : LinkedList<K>
+}
+class HashEntry<K,V>
+class PriorityQueue<T> {
+  - heap : Object[]
+  - comparator : Comparator<T>
+  + insert(e : T)
+  + extractMax() : T
+  + peekMax() : T
+  + remove(e : T) : boolean
+}
+class BinarySearchTree<T> {
+  - root : Node<T>
+  - comparator : Comparator<T>
+  + insert(e : T)
+  + remove(e : T) : boolean
+  + contains(e : T) : boolean
+  + min() : T
+  + max() : T
+  + inOrder() : LinkedList<T>
+  + reverseInOrder() : LinkedList<T>
+  + height() : int
+}
+class UnionFind {
+  - parent : int[]
+  - rank : int[]
+  + UnionFind(n : int)
+  + find(x : int) : int
+  + union(a : int, b : int) : boolean
+  + connected(a : int, b : int) : boolean
+  + componentCount() : int
+}
+
+interface IGraph<T> {
+  + addVertex(v : T) : boolean
+  + addEdge(a : T, b : T, w : double)
+  + removeEdge(a : T, b : T) : boolean
+  + updateWeight(a : T, b : T, w : double)
+  + getAdjacent(v : T) : LinkedList<T>
+  + getWeight(a : T, b : T) : double
+  + vertices() : LinkedList<T>
+  + edges() : LinkedList<Edge<T>>
+  + bfs(start : T) : BfsResult<T>
+  + dfs() : DfsResult<T>
+  + dijkstra(source : T) : ShortestPathResult<T>
+  + floydWarshall() : AllPairsResult<T>
+  + primMST(start : T) : MstResult<T>
+  + kruskalMST() : MstResult<T>
+}
+abstract class AbstractGraph<T> {
+  # vertexIndex : HashTable<T,Integer>
+  # vertexList : LinkedList<T>
+  + bfs(start : T) : BfsResult<T>
+  + dfs() : DfsResult<T>
+  + dijkstra(source : T) : ShortestPathResult<T>
+  + floydWarshall() : AllPairsResult<T>
+  + primMST(start : T) : MstResult<T>
+  + kruskalMST() : MstResult<T>
+}
+class AdjacencyListGraph<T>
+class AdjacencyMatrixGraph<T>
+class Edge<T> {
+  + from : T
+  + to : T
+  + weight : double
+}
+class BfsResult<T>
+class DfsResult<T>
+class ShortestPathResult<T>
+class AllPairsResult<T>
+class MstResult<T>
+
+IGraph <|.. AbstractGraph
+AbstractGraph <|-- AdjacencyListGraph
+AbstractGraph <|-- AdjacencyMatrixGraph
+AbstractGraph ..> PriorityQueue : Dijkstra, Prim
+AbstractGraph ..> Queue : BFS
+AbstractGraph ..> Stack : DFS iterativo
+AbstractGraph ..> UnionFind : Kruskal
+AbstractGraph ..> BfsResult
+AbstractGraph ..> DfsResult
+AbstractGraph ..> ShortestPathResult
+AbstractGraph ..> AllPairsResult
+AbstractGraph ..> MstResult
+AbstractGraph --> HashTable
+AdjacencyListGraph --> LinkedList : adyacencias
+Stack *-- LinkedList
+Queue *-- LinkedList
+HashTable *-- HashEntry
+MstResult --> Edge
+@enduml

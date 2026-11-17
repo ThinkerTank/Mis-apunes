@@ -1,0 +1,40 @@
+@startuml secuencia-asignacion
+title Secuencia — Asignar un vehículo a un incidente
+skinparam shadowing false
+actor Operador
+participant IncidentPanelController as UI
+participant AppContext as Ctx
+participant DispatchCenter as DC
+participant IncidentRepository as IR
+participant VehicleRepository as VR
+participant RouteService as RS
+participant "CityMap\n(grafo de tráfico)" as G
+
+Operador -> UI : selecciona incidente y vehículo, "Asignar"
+UI -> Ctx : perform("Vehículo asignado", acción)
+Ctx -> DC : assignVehicle(incidentId, vehicleId)
+activate DC
+note right of DC : synchronized — excluye a los hilos\nreloj y generador
+DC -> IR : findById(incidentId)
+IR --> DC : incident
+DC -> VR : findById(vehicleId)
+VR --> DC : vehicle
+alt tipo incompatible
+  DC --> Ctx : IncompatibleVehicleException
+else vehículo ocupado
+  DC --> Ctx : VehicleNotAvailableException
+end
+DC -> G : dijkstra(vehicle.position)
+G --> DC : ShortestPathResult
+alt sin camino
+  DC --> Ctx : RouteUnavailableException
+end
+DC -> RS : structuralDistance(vehicle, incident) (Floyd-Warshall)
+DC -> DC : crea AssignmentRecord(costo, óptimo Dijkstra, distancia FW)
+DC -> DC : incident.markInProgress(), vehicle.route = camino
+DC -> DC : quita de dispatchQueue y attentionQueue,\napila OperatorAction, registra evento
+DC --> Ctx : AssignmentRecord
+deactivate DC
+Ctx -> UI : refreshAll()
+Ctx --> Operador : mensaje en la barra de estado
+@enduml

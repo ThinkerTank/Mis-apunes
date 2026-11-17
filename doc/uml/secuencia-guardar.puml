@@ -1,0 +1,35 @@
+@startuml secuencia-guardar
+title Secuencia — Guardar y recuperar una partida
+skinparam shadowing false
+actor Operador
+participant MainController as MC
+participant SimulationEngine as Eng
+participant SimulationRepository as Repo
+participant Simulation as Sim
+participant DispatchCenter as DC
+database "partida.sgmms" as F
+
+Operador -> MC : Archivo › Guardar partida
+MC -> Eng : pause()
+MC -> Repo : save(simulation, file)
+Repo -> Sim : synchronized (simulation)
+Repo -> DC : synchronized (center)
+Repo -> F : escribe "SGMMS-SAVE-1" + objeto en archivo temporal
+Repo -> F : mueve el temporal sobre el destino (atómico)
+Repo --> MC : ok
+MC -> Eng : resume()
+
+Operador -> MC : Archivo › Abrir partida
+MC -> Repo : load(file)
+Repo -> F : lee encabezado
+alt encabezado inválido / archivo dañado
+  Repo --> MC : PersistenceException("no es una partida…")
+  MC --> Operador : diálogo de error (la partida actual sigue)
+else correcto
+  Repo -> Sim : readObject()
+  note right of Sim : CityMap.readObject reconstruye los grafos\ntransient desde la cuadrícula y las vías bloqueadas
+  Repo --> MC : simulation
+  MC -> Eng : stop() del motor anterior
+  MC -> MC : context.install(simulation)
+end
+@enduml
