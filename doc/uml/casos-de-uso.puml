@@ -1,0 +1,46 @@
+@startuml casos-de-uso
+title SGMMS — Diagrama de casos de uso
+left to right direction
+skinparam shadowing false
+actor "Operador del\ncentro de monitoreo" as Op
+actor "Reloj de simulación\n(hilo)" as Clock
+actor "Generador de incidentes\n(hilo)" as Gen
+rectangle SGMMS {
+  usecase "Cargar configuración JSON" as UC1
+  usecase "Iniciar / pausar / reanudar simulación" as UC2
+  usecase "Guardar y recuperar partida" as UC3
+  usecase "Consultar indicadores del centro" as UC4
+  usecase "Ver mapa con capas\n(tráfico, riesgo, corredores, rutas)" as UC5
+  usecase "Mover operador / deshacer" as UC6
+  usecase "Bloquear / desbloquear vía" as UC7
+  usecase "Reportar incidente manual" as UC8
+  usecase "Asignar vehículo" as UC9
+  usecase "Ver vehículo sugerido" as UC10
+  usecase "Atender siguiente urgente" as UC11
+  usecase "Resolver incidente y puntuar" as UC12
+  usecase "Gestionar flota\n(registrar, fuera de servicio)" as UC13
+  usecase "Mover vehículos y tráfico" as UC14
+  usecase "Detectar accidentes" as UC15
+  usecase "Generar robos e incendios" as UC16
+  usecase "Recalcular rutas" as UC17
+}
+Op --> UC1
+Op --> UC2
+Op --> UC3
+Op --> UC4
+Op --> UC5
+Op --> UC6
+Op --> UC7
+Op --> UC8
+Op --> UC9
+Op --> UC11
+Op --> UC12
+Op --> UC13
+Clock --> UC14
+Clock --> UC15
+Gen --> UC16
+UC9 ..> UC10 : <<include>>
+UC11 ..> UC9 : <<include>>
+UC7 ..> UC17 : <<include>>
+UC14 ..> UC17 : <<extend>>\n(vía cerrada en ruta)
+@enduml

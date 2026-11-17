@@ -1,0 +1,110 @@
+@startuml clases-arquitectura
+title SGMMS — Arquitectura MVC, persistencia y excepciones
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+package controller {
+  class SgmmsApp
+  class AppContext {
+    + install(simulation)
+    + perform(successMessage, action)
+    + navigate(screen)
+    + refreshAll()
+    + shutdown()
+  }
+  interface ScreenController {
+    + init(context)
+    + refresh()
+  }
+  class MainController
+  class MonitoringCenterController
+  class TrafficMapController
+  class IncidentPanelController
+  enum Screen {
+    MONITORING
+    MAP
+    INCIDENTS
+  }
+}
+package view {
+  class MapRenderer {
+    + draw(g, width, height, scene)
+  }
+  class MapScene
+  class Palette
+  note "MainView.fxml, MonitoringCenterView.fxml,\nTrafficMapView.fxml, IncidentPanelView.fxml, styles.css" as N1
+}
+package persistence {
+  class ConfigLoader {
+    + {static} loadDefault() : SgmmsConfig
+    + {static} load(city, vehicles) : SgmmsConfig
+  }
+  class SgmmsConfig
+  class JsonParser {
+    + {static} parse(text) : JsonValue
+  }
+  class JsonValue
+  class SimulationRepository {
+    + {static} save(simulation, file)
+    + {static} load(file) : Simulation
+  }
+  class ConfigurationException <<checked>>
+  class PersistenceException <<checked>>
+}
+package model.exceptions {
+  class SgmmsException <<RuntimeException>>
+  class EmptyStructureException
+  class IncidentNotFoundException
+  class VehicleNotFoundException
+  class IncompatibleVehicleException
+  class VehicleNotAvailableException
+  class InvalidIncidentStateException
+  class InvalidMovementException
+  class InvalidMapException
+  class RouteUnavailableException
+  class VertexNotFoundException
+  class DuplicateVehicleException
+}
+package model {
+  class DispatchCenter
+  class "simulation.Simulation" as Simulation
+  class "simulation.SimulationEngine" as SimulationEngine
+  interface "simulation.SimulationListener" as SimulationListener
+}
+
+SgmmsApp --> AppContext
+SgmmsApp ..> ConfigLoader
+AppContext ..|> SimulationListener
+AppContext --> SimulationEngine
+AppContext --> Simulation
+AppContext o-- "3" ScreenController
+MainController ..|> ScreenController
+MonitoringCenterController ..|> ScreenController
+TrafficMapController ..|> ScreenController
+IncidentPanelController ..|> ScreenController
+MainController ..> SimulationRepository
+TrafficMapController ..> MapRenderer
+TrafficMapController ..> MapScene
+MapRenderer ..> Palette
+Simulation --> DispatchCenter
+ConfigLoader ..> JsonParser
+ConfigLoader ..> SgmmsConfig
+JsonParser ..> JsonValue
+ConfigLoader ..> ConfigurationException
+SimulationRepository ..> PersistenceException
+SimulationRepository ..> Simulation
+
+SgmmsException <|-- EmptyStructureException
+SgmmsException <|-- IncidentNotFoundException
+SgmmsException <|-- VehicleNotFoundException
+SgmmsException <|-- IncompatibleVehicleException
+SgmmsException <|-- VehicleNotAvailableException
+SgmmsException <|-- InvalidIncidentStateException
+SgmmsException <|-- InvalidMovementException
+SgmmsException <|-- InvalidMapException
+SgmmsException <|-- RouteUnavailableException
+SgmmsException <|-- VertexNotFoundException
+SgmmsException <|-- DuplicateVehicleException
+AppContext ..> SgmmsException : captura
+@enduml

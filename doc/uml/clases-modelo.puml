@@ -1,0 +1,190 @@
+@startuml clases-modelo
+title SGMMS — Modelo de dominio y simulación
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+package model {
+  class DispatchCenter <<fachada, synchronized>> {
+    - dispatchQueue : Queue<Incident>
+    - attentionQueue : PriorityQueue<Incident>
+    - events : Queue<SimulationEvent>
+    - actions : Stack<OperatorAction>
+    - assignments : HashTable<String,AssignmentRecord>
+    - score : int
+    - minute : long
+    + reportIncident(type, position, severity, description) : Incident
+    + suggestVehicle(incidentId) : Vehicle
+    + assignVehicle(incidentId, vehicleId) : AssignmentRecord
+    + attendNext() : AssignmentRecord
+    + resolveIncident(incidentId) : ScoreBreakdown
+    + blockRoad(a, b) : LinkedList<Incident>
+    + unblockRoad(a, b)
+    + advanceMinute()
+    + updateTraffic(cars)
+    + indicators() : Indicators
+    + pollEvents() : LinkedList<SimulationEvent>
+  }
+  class CityMap {
+    - grid : ZoneType[][]
+    - monitoringCenter : Position
+    - baseRoads : LinkedList<Edge<Position>>
+    - blockedRoads : LinkedList<Edge<Position>>
+    - <<transient>> trafficGraph : IGraph<Position>
+    - <<transient>> matrixGraph : IGraph<Position>
+    + zoneAt(p) : ZoneType
+    + baseGraph() : IGraph<Position>
+    + trafficGraph() : IGraph<Position>
+    + applyCongestion(vehiclesPerDistrict)
+    + riskPoints() : LinkedList<Position>
+    + topologyVersion() : int
+  }
+  class RouteService <<transient>> {
+    + routesFrom(source) : ShortestPathResult<Position>
+    + distanceMatrix() : AllPairsResult<Position>
+    + structuralDistance(a, b) : double
+    + responseTime(zone) : double
+    + primCorridors() : MstResult<Position>
+    + kruskalCorridors() : MstResult<Position>
+  }
+  class IncidentRepository {
+    - byPriority : BinarySearchTree<Incident>
+    - byId : HashTable<String,Incident>
+    - resolved : LinkedList<Incident>
+    + add(i)
+    + findById(id) : Incident
+    + archive(id) : Incident
+    + mostUrgent() : Incident
+    + activeByPriority() : LinkedList<Incident>
+    + isConsistent() : boolean
+  }
+  class VehicleRepository {
+    - byId : HashTable<String,Vehicle>
+    - order : LinkedList<Vehicle>
+    + add(v)
+    + findById(id) : Vehicle
+    + availableFor(type) : LinkedList<Vehicle>
+  }
+  class OperatorNavigator {
+    - position : Position
+    - movements : Stack<Movement>
+    + move(direction, minute) : Movement
+    + undo() : Movement
+  }
+  class ScoreCalculator {
+    + score(incident, record, resolvedMinute) : ScoreBreakdown
+  }
+  class Incident {
+    - id : String
+    - type : IncidentType
+    - severity : Severity
+    - status : IncidentStatus
+    - position : Position
+    - generatedAtMinute : long
+    + markInProgress(vehicleId, minute)
+    + markResolved(minute)
+  }
+  class Vehicle {
+    - id : String
+    - type : VehicleType
+    - status : VehicleStatus
+    - position : Position
+    - route : LinkedList<Position>
+    + isAvailable() : boolean
+    + nextStep() : Position
+  }
+  class AssignmentRecord
+  class ScoreBreakdown
+  class Indicators
+  class SimulationEvent
+  class OperatorAction
+  class Movement
+  class Position
+  class IncidentPriorityComparator
+  enum ZoneType
+  enum IncidentType
+  enum Severity
+  enum IncidentStatus
+  enum VehicleType {
+    + canAttend(t : IncidentType) : boolean
+  }
+  enum VehicleStatus
+  enum Direction
+}
+
+package model.simulation {
+  class Simulation <<synchronized>> {
+    - random : Random
+    + clockTick() : LinkedList<AccidentReport>
+    + generationTick() : LinkedList<Incident>
+  }
+  class SimulationEngine {
+    - clock : Thread
+    - generator : Thread
+    - indicators : Thread
+    - <<volatile>> running : boolean
+    - <<volatile>> paused : boolean
+    + start()
+    + pause()
+    + resume()
+    + stop()
+  }
+  interface SimulationListener {
+    + onUpdate(indicators, events)
+    + onError(error)
+  }
+  class CivilianTraffic
+  class AccidentDetector {
+    + detect(map, moves, busy, minute, random) : LinkedList<AccidentReport>
+  }
+  class IncidentGenerator {
+    + tick(center, settings, random, minute) : LinkedList<Incident>
+  }
+  class SimulationSettings
+  class AccidentReport
+  enum AccidentCriterion {
+    COLLISION
+    CRITICAL_CONGESTION
+    RISK_POINT_CONVERGENCE
+  }
+  class CarMove
+}
+
+DispatchCenter *-- CityMap
+DispatchCenter *-- IncidentRepository
+DispatchCenter *-- VehicleRepository
+DispatchCenter *-- OperatorNavigator
+DispatchCenter *-- RouteService
+DispatchCenter ..> ScoreCalculator
+DispatchCenter o-- "*" AssignmentRecord
+DispatchCenter ..> Indicators
+DispatchCenter o-- "*" SimulationEvent
+DispatchCenter o-- "*" OperatorAction
+RouteService --> CityMap
+IncidentRepository o-- "*" Incident
+IncidentRepository ..> IncidentPriorityComparator
+VehicleRepository o-- "*" Vehicle
+OperatorNavigator o-- "*" Movement
+Incident --> IncidentType
+Incident --> Severity
+Incident --> IncidentStatus
+Incident --> Position
+Vehicle --> VehicleType
+Vehicle --> VehicleStatus
+CityMap --> ZoneType
+Movement --> Direction
+AssignmentRecord --> Incident
+AssignmentRecord --> Vehicle
+ScoreCalculator ..> ScoreBreakdown
+
+Simulation --> DispatchCenter : recurso compartido
+Simulation *-- CivilianTraffic
+Simulation *-- AccidentDetector
+Simulation *-- IncidentGenerator
+Simulation --> SimulationSettings
+SimulationEngine --> Simulation
+SimulationEngine --> SimulationListener
+AccidentDetector ..> CarMove
+AccidentDetector ..> AccidentReport
+AccidentReport --> AccidentCriterion
+@enduml

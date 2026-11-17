@@ -117,14 +117,16 @@ class CityMapTest {
     }
 
     @Test
-    void riskPointsAreIntersectionsOnCyclesNearMainRoads() {
+    void riskPointsAreCrossingsOfTheMainRoadNetwork() {
         CityMap map = TestCity.map();
 
         assertFalse(map.riskPoints().isEmpty());
         for (Position p : map.riskPoints()) {
-            assertTrue(map.baseGraph().getAdjacent(p).size() >= 3);
+            assertEquals(ZoneType.MAIN_ROAD, map.zoneAt(p));
+            assertTrue(map.baseGraph().getAdjacent(p).filter(q -> map.zoneAt(q) == ZoneType.MAIN_ROAD).size() >= 3);
             assertTrue(map.isRiskPoint(p));
         }
+        assertFalse(map.isRiskPoint(new Position(0, 0)));
     }
 
     @Test
