@@ -23,7 +23,9 @@ public final class SgmmsConfig {
 
     /** Builds a fresh simulation from this configuration. */
     public Simulation createSimulation() {
-        return new Simulation(new DispatchCenter(map, vehicles), settings);
+        Simulation simulation = new Simulation(new DispatchCenter(map, vehicles), settings);
+        simulation.setCityName(cityName);
+        return simulation;
     }
 
     public String getCityName() {

@@ -40,7 +40,7 @@ class ConfigLoaderTest {
         assertEquals(24, config.getMap().getWidth());
         assertEquals(16, config.getMap().getHeight());
         assertEquals(9, config.getVehicles().size());
-        assertEquals(16, config.getSettings().getCivilianCars());
+        assertEquals(14, config.getSettings().getCivilianCars());
         assertTrue(config.getMap().cellsOf(ZoneType.COMMERCIAL).size() > 0);
     }
 

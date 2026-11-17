@@ -1,5 +1,6 @@
 package co.edu.icesi.sgmms.model;
 
+import co.edu.icesi.sgmms.model.exceptions.DuplicateVehicleException;
 import co.edu.icesi.sgmms.model.exceptions.EmptyStructureException;
 import co.edu.icesi.sgmms.model.exceptions.IncompatibleVehicleException;
 import co.edu.icesi.sgmms.model.exceptions.InvalidIncidentStateException;
@@ -157,6 +158,50 @@ public class DispatchCenter implements Serializable {
     /** Vehicle by ID (hash table, O(1) expected). @throws VehicleNotFoundException */
     public synchronized Vehicle findVehicle(String id) {
         return vehicles.findById(id);
+    }
+
+    /**
+     * Registers a new vehicle in the hash table (RF6).
+     *
+     * <p>Complexity — time: average O(1); space: O(1).
+     *
+     * @throws DuplicateVehicleException if the ID already exists
+     * @throws InvalidMapException       if the position is not a road inside the map
+     */
+    public synchronized Vehicle registerVehicle(String id, VehicleType type, Position position) {
+        String cleanId = id == null ? "" : id.trim();
+        if (cleanId.isEmpty()) {
+            throw new DuplicateVehicleException("El id del vehículo no puede estar vacío");
+        }
+        if (vehicles.contains(cleanId)) {
+            throw new DuplicateVehicleException("Ya existe un vehículo con id " + cleanId);
+        }
+        if (!map.canEnter(position)) {
+            throw new InvalidMapException("Los vehículos deben ubicarse sobre una vía: " + position);
+        }
+        Vehicle vehicle = new Vehicle(cleanId, type, position);
+        vehicles.add(vehicle);
+        record(SimulationEvent.Type.VEHICLE_STATUS_CHANGED, cleanId + " (" + type.getLabel() + ") registrado en " + position);
+        return vehicle;
+    }
+
+    /**
+     * Takes an available vehicle out of service, or puts it back (RF6).
+     *
+     * @throws VehicleNotAvailableException if the vehicle is busy with an incident
+     */
+    public synchronized void setOutOfService(String vehicleId, boolean outOfService) {
+        Vehicle vehicle = vehicles.findById(vehicleId);
+        VehicleStatus before = vehicle.getStatus();
+        if (before == VehicleStatus.EN_ROUTE || before == VehicleStatus.ATTENDING) {
+            throw new VehicleNotAvailableException("El vehículo " + vehicleId + " está ocupado ("
+                    + before.getLabel() + ") y no puede cambiar de estado");
+        }
+        vehicle.setOutOfService(outOfService);
+        if (vehicle.getStatus() != before) {
+            record(SimulationEvent.Type.VEHICLE_STATUS_CHANGED, vehicleId + ": " + before.getLabel() + " → "
+                    + vehicle.getStatus().getLabel());
+        }
     }
 
     /** Copy of the vehicle list in configuration order. Complexity — O(m). */
@@ -389,6 +434,16 @@ public class DispatchCenter implements Serializable {
     /** Risk points of the road network (DFS cycles near main roads). Complexity — O(R) copy. */
     public synchronized LinkedList<Position> riskPoints() {
         return map.riskPoints().copy();
+    }
+
+    /** Number of connected components of the open road network (DFS). Complexity — O(V + E). */
+    public synchronized int connectedComponents() {
+        return map.structuralAnalysis().componentCount();
+    }
+
+    /** Active incidents of one severity, most urgent first (BST query). Complexity — O(n). */
+    public synchronized LinkedList<Incident> activeIncidentsWithSeverity(Severity severity) {
+        return incidents.activeWithSeverity(severity);
     }
 
     /** BFS coverage of the monitoring center per zone. */

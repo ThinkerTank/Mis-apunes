@@ -7,11 +7,12 @@ public class SimulationSettings implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private double robberyProbability = 0.06;
-    private double fireProbability = 0.03;
-    private int civilianCars = 16;
+    private double robberyProbability = 0.05;
+    private double fireProbability = 0.025;
+    private int civilianCars = 14;
     private int maxActiveIncidents = 12;
     private int accidentCooldownMinutes = 8;
+    private double collisionProbability = 0.20;
     private long seed = System.nanoTime();
 
     /** Probability that a robbery appears in a given simulated minute. */
@@ -57,6 +58,18 @@ public class SimulationSettings implements Serializable {
 
     public void setAccidentCooldownMinutes(int accidentCooldownMinutes) {
         this.accidentCooldownMinutes = accidentCooldownMinutes;
+    }
+
+    /**
+     * Probability that two vehicles heading for the same cell actually crash: usually one of them
+     * yields, so only a fraction of these conflicts end in a collision.
+     */
+    public double getCollisionProbability() {
+        return collisionProbability;
+    }
+
+    public void setCollisionProbability(double collisionProbability) {
+        this.collisionProbability = collisionProbability;
     }
 
     public long getSeed() {

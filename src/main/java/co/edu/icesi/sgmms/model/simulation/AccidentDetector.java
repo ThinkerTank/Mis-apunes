@@ -6,6 +6,7 @@ import co.edu.icesi.sgmms.model.Position;
 import co.edu.icesi.sgmms.model.structures.HashTable;
 import co.edu.icesi.sgmms.model.structures.LinkedList;
 import java.io.Serializable;
+import java.util.Random;
 
 /**
  * Applies the three {@link AccidentCriterion accident criteria} to the movements of one minute.
@@ -20,9 +21,16 @@ public class AccidentDetector implements Serializable {
 
     private final HashTable<String, Long> lastFired = new HashTable<>();
     private final int cooldownMinutes;
+    private final double collisionProbability;
 
-    public AccidentDetector(int cooldownMinutes) {
+    /**
+     * @param cooldownMinutes      minutes before a criterion fires again in the same place
+     * @param collisionProbability probability that a conflict for the same cell ends in a crash
+     *                             instead of one vehicle yielding
+     */
+    public AccidentDetector(int cooldownMinutes, double collisionProbability) {
         this.cooldownMinutes = cooldownMinutes;
+        this.collisionProbability = collisionProbability;
     }
 
     /**
@@ -33,20 +41,25 @@ public class AccidentDetector implements Serializable {
      *
      * @param moves     movements of every moving vehicle (civilian and emergency) this minute
      * @param busyCells cells that already have an active incident
+     * @param random    decides whether a conflict for the same cell ends in a crash
      */
     public LinkedList<AccidentReport> detect(CityMap map, LinkedList<CarMove> moves,
-                                             HashTable<Position, Boolean> busyCells, long minute) {
+                                             HashTable<Position, Boolean> busyCells, long minute, Random random) {
         LinkedList<AccidentReport> reports = new LinkedList<>();
         HashTable<String, Boolean> crashed = new HashTable<>();
-        detectCollisions(moves, busyCells, minute, reports, crashed);
+        detectCollisions(moves, busyCells, minute, reports, crashed, random);
         detectRiskPointConvergence(map, moves, busyCells, minute, reports, crashed);
         detectCongestion(map, moves, busyCells, minute, reports);
         return reports;
     }
 
-    /** Criterion 1: two moving vehicles end up in the same cell. */
+    /**
+     * Criterion 1: two moving vehicles end up in the same cell. Usually one yields; with
+     * probability {@code collisionProbability} neither does and they crash.
+     */
     private void detectCollisions(LinkedList<CarMove> moves, HashTable<Position, Boolean> busy, long minute,
-                                  LinkedList<AccidentReport> reports, HashTable<String, Boolean> crashed) {
+                                  LinkedList<AccidentReport> reports, HashTable<String, Boolean> crashed,
+                                  Random random) {
         HashTable<Position, LinkedList<String>> byTarget = new HashTable<>();
         LinkedList<Position> targets = new LinkedList<>();
         for (CarMove move : moves) {
@@ -63,14 +76,19 @@ public class AccidentDetector implements Serializable {
         }
         for (Position target : targets) {
             LinkedList<String> group = byTarget.get(target);
-            if (group.size() >= 2 && fire(AccidentCriterion.COLLISION, "collision@" + target, target, group, busy,
+            if (group.size() >= 2 && random.nextDouble() < collisionProbability && fire(AccidentCriterion.COLLISION, "collision@" + target, target, group, busy,
                     minute, reports)) {
                 markCrashed(group, crashed);
             }
         }
     }
 
-    /** Criterion 2: a district holds more vehicles than its capacity. */
+    /**
+     * Criterion 2: a district holds more vehicles than its capacity. The accident happens where the
+     * traffic is densest: at the cell of one of those vehicles, involving only the vehicles on that
+     * cell or right next to it (the rest of the jam keeps moving, so one jam does not keep producing
+     * crashes). The cool-down is twice as long as for the other criteria.
+     */
     private void detectCongestion(CityMap map, LinkedList<CarMove> moves, HashTable<Position, Boolean> busy,
                                   long minute, LinkedList<AccidentReport> reports) {
         int[] counts = new int[map.districtCount()];
@@ -79,20 +97,40 @@ public class AccidentDetector implements Serializable {
         }
         int capacity = map.getSettings().getZoneCapacity();
         for (int district = 0; district < counts.length; district++) {
-            if (counts[district] > capacity) {
-                LinkedList<String> involved = new LinkedList<>();
-                Position place = null;
-                for (CarMove move : moves) {
-                    if (map.districtOf(move.getTo()) == district) {
-                        involved.addLast(move.getVehicleId());
-                        if (place == null || busy.containsKey(place)) {
-                            place = move.getTo();
-                        }
+            if (counts[district] <= capacity) {
+                continue;
+            }
+            Position place = null;
+            int densest = -1;
+            for (CarMove move : moves) {
+                if (map.districtOf(move.getTo()) != district || busy.containsKey(move.getTo())) {
+                    continue;
+                }
+                int around = 0;
+                for (CarMove other : moves) {
+                    if (other.getTo().manhattan(move.getTo()) <= 1) {
+                        around++;
                     }
                 }
-                fire(AccidentCriterion.CRITICAL_CONGESTION, "congestion@" + district, place, involved, busy,
-                        minute, reports);
+                if (around > densest) {
+                    densest = around;
+                    place = move.getTo();
+                }
             }
+            if (place == null) {
+                continue;
+            }
+            LinkedList<String> involved = new LinkedList<>();
+            for (CarMove move : moves) {
+                if (move.getTo().manhattan(place) <= 1) {
+                    involved.addLast(move.getVehicleId());
+                }
+            }
+            Long last = lastFired.get("congestion@" + district);
+            if (last != null && minute - last < 2L * cooldownMinutes) {
+                continue;
+            }
+            fire(AccidentCriterion.CRITICAL_CONGESTION, "congestion@" + district, place, involved, busy, minute, reports);
         }
     }
 

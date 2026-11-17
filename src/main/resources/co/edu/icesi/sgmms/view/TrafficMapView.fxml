@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.icesi.sgmms.controller.TrafficMapController" styleClass="screen">
+    <top>
+        <VBox spacing="2" styleClass="screen-header">
+            <Label text="Mapa de Tráfico" styleClass="screen-title"/>
+            <Label text="Muévase con W A S D o las flechas · U deshace el último movimiento · clic en una celda para ver qué hay"
+                   styleClass="screen-subtitle"/>
+        </VBox>
+    </top>
+    <center>
+        <Pane fx:id="canvasHolder" styleClass="map-holder" focusTraversable="true" minWidth="400" minHeight="300">
+            <Canvas fx:id="canvas"/>
+        </Pane>
+    </center>
+    <right>
+        <ScrollPane fitToWidth="true" prefWidth="320" styleClass="side-scroll">
+            <VBox spacing="12" styleClass="side-panel">
+                <VBox spacing="6" styleClass="card">
+                    <Label text="Operador" styleClass="card-title"/>
+                    <Label fx:id="operatorLabel" styleClass="field-value" wrapText="true"/>
+                    <Label fx:id="movementLabel" styleClass="muted" wrapText="true"/>
+                    <Button text="Deshacer movimiento (U)" onAction="#undo" styleClass="secondary-button" maxWidth="Infinity"/>
+                </VBox>
+                <VBox spacing="6" styleClass="card">
+                    <Label text="Capas del mapa" styleClass="card-title"/>
+                    <CheckBox fx:id="routesCheck" text="Rutas de los vehículos en camino (Dijkstra)" selected="true" wrapText="true"/>
+                    <CheckBox fx:id="civiliansCheck" text="Vehículos particulares" selected="true"/>
+                    <CheckBox fx:id="riskCheck" text="Puntos de riesgo (DFS)"/>
+                    <CheckBox fx:id="corridorsCheck" text="Corredores de emergencia (MST)"/>
+                    <ComboBox fx:id="algorithmBox" maxWidth="Infinity"/>
+                    <Label fx:id="corridorsLabel" styleClass="muted" wrapText="true"/>
+                </VBox>
+                <VBox spacing="6" styleClass="card">
+                    <Label text="Vías" styleClass="card-title"/>
+                    <ToggleButton fx:id="roadModeButton" text="Modo bloquear / reabrir vía" maxWidth="Infinity" styleClass="secondary-button"/>
+                    <Label fx:id="roadLabel" text="Active el modo para cerrar o reabrir tramos de vía." styleClass="muted" wrapText="true"/>
+                </VBox>
+                <VBox spacing="6" styleClass="card">
+                    <Label text="Selección" styleClass="card-title"/>
+                    <Label fx:id="selectionLabel" text="Haga clic en una celda del mapa." styleClass="field-value" wrapText="true"/>
+                </VBox>
+                <VBox spacing="6" styleClass="card">
+                    <Label text="Convenciones" styleClass="card-title"/>
+                    <VBox fx:id="legendBox" spacing="5"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </right>
+</BorderPane>

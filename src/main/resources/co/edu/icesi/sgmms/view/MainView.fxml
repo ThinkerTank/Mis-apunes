@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.icesi.sgmms.controller.MainController" styleClass="app-root">
+    <top>
+        <VBox>
+            <HBox styleClass="header" alignment="CENTER_LEFT" spacing="18">
+                <VBox spacing="2">
+                    <Label text="SGMMS" styleClass="app-title"/>
+                    <Label fx:id="cityLabel" styleClass="app-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <VBox alignment="CENTER_RIGHT" spacing="1">
+                    <Label text="RELOJ DE SIMULACIÓN" styleClass="header-caption"/>
+                    <Label fx:id="clockLabel" styleClass="header-value"/>
+                </VBox>
+                <VBox alignment="CENTER_RIGHT" spacing="1">
+                    <Label text="PUNTAJE DEL OPERADOR" styleClass="header-caption"/>
+                    <Label fx:id="scoreLabel" styleClass="header-score"/>
+                </VBox>
+                <Button fx:id="runButton" onAction="#toggleRun" styleClass="run-button" minWidth="120"/>
+                <ComboBox fx:id="speedBox" prefWidth="210" styleClass="speed-box"/>
+                <MenuButton text="Archivo" styleClass="file-menu">
+                    <items>
+                        <MenuItem text="Guardar simulación…" onAction="#saveSimulation"/>
+                        <MenuItem text="Cargar simulación…" onAction="#loadSimulation"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Cargar configuración JSON…" onAction="#loadConfiguration"/>
+                        <MenuItem text="Nueva simulación (configuración de Palmira)" onAction="#restartDefault"/>
+                    </items>
+                </MenuButton>
+            </HBox>
+            <HBox styleClass="nav-bar" spacing="6" alignment="CENTER_LEFT">
+                <ToggleButton fx:id="monitoringTab" text="Centro de Monitoreo" onAction="#showMonitoring" styleClass="nav-tab"/>
+                <ToggleButton fx:id="mapTab" text="Mapa de Tráfico" onAction="#showMap" styleClass="nav-tab"/>
+                <ToggleButton fx:id="panelTab" text="Panel de Incidentes" onAction="#showPanel" styleClass="nav-tab"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <StackPane fx:id="content" styleClass="content"/>
+    </center>
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT">
+            <Label fx:id="statusLabel" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

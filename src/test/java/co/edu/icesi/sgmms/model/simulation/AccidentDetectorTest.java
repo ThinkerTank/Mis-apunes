@@ -8,9 +8,13 @@ import co.edu.icesi.sgmms.model.MapSettings;
 import co.edu.icesi.sgmms.model.Position;
 import co.edu.icesi.sgmms.model.structures.HashTable;
 import co.edu.icesi.sgmms.model.structures.LinkedList;
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 class AccidentDetectorTest {
+
+    /** With collision probability 1.0 every conflict crashes, so the tests are deterministic. */
+    private static final Random ALWAYS = new Random(1);
 
     private static LinkedList<CarMove> moves(CarMove... list) {
         LinkedList<CarMove> result = new LinkedList<>();
@@ -28,11 +32,11 @@ class AccidentDetectorTest {
     void twoVehiclesEnteringTheSameCellCollide() {
         CityMap map = SimFixtures.map();
         Position target = new Position(4, 3);
-        AccidentDetector detector = new AccidentDetector(5);
+        AccidentDetector detector = new AccidentDetector(5, 1.0);
 
         LinkedList<AccidentReport> reports = detector.detect(map, moves(
                 new CarMove("CIV-01", new Position(3, 3), target),
-                new CarMove("CIV-02", new Position(5, 3), target)), new HashTable<>(), 10);
+                new CarMove("CIV-02", new Position(5, 3), target)), new HashTable<>(), 10, ALWAYS);
 
         LinkedList<AccidentReport> collisions = only(reports, AccidentCriterion.COLLISION);
         assertEquals(1, collisions.size());
@@ -45,16 +49,17 @@ class AccidentDetectorTest {
         MapSettings settings = new MapSettings();
         settings.setZoneCapacity(2);
         CityMap map = SimFixtures.map(settings);
-        AccidentDetector detector = new AccidentDetector(5);
+        AccidentDetector detector = new AccidentDetector(5, 1.0);
 
         LinkedList<AccidentReport> reports = detector.detect(map, moves(
                 new CarMove("CIV-01", new Position(0, 0), new Position(1, 0)),
                 new CarMove("CIV-02", new Position(3, 0), new Position(2, 0)),
-                new CarMove("CIV-03", new Position(0, 3), new Position(0, 2))), new HashTable<>(), 10);
+                new CarMove("CIV-03", new Position(0, 3), new Position(0, 2))), new HashTable<>(), 10, ALWAYS);
 
         LinkedList<AccidentReport> congestion = only(reports, AccidentCriterion.CRITICAL_CONGESTION);
         assertEquals(1, congestion.size());
-        assertEquals(3, congestion.getFirst().getInvolved().size());
+        // only the cars at the densest spot crash: (1,0) and (2,0) are neighbors, (0,2) is not
+        assertEquals(2, congestion.getFirst().getInvolved().size());
     }
 
     @Test
@@ -64,11 +69,11 @@ class AccidentDetectorTest {
         LinkedList<Position> neighbors = map.openNeighbors(risk);
         Position first = neighbors.get(0);
         Position second = neighbors.get(1);
-        AccidentDetector detector = new AccidentDetector(5);
+        AccidentDetector detector = new AccidentDetector(5, 1.0);
 
         LinkedList<AccidentReport> reports = detector.detect(map, moves(
                 new CarMove("CIV-01", new Position(0, 6), first),
-                new CarMove("CIV-02", new Position(9, 6), second)), new HashTable<>(), 10);
+                new CarMove("CIV-02", new Position(9, 6), second)), new HashTable<>(), 10, ALWAYS);
 
         LinkedList<AccidentReport> convergence = only(reports, AccidentCriterion.RISK_POINT_CONVERGENCE);
         assertEquals(1, convergence.size());
@@ -79,25 +84,36 @@ class AccidentDetectorTest {
     void theSameCriterionWaitsForItsCooldownInTheSamePlace() {
         CityMap map = SimFixtures.map();
         Position target = new Position(4, 3);
-        AccidentDetector detector = new AccidentDetector(5);
+        AccidentDetector detector = new AccidentDetector(5, 1.0);
         CarMove a = new CarMove("CIV-01", new Position(3, 3), target);
         CarMove b = new CarMove("CIV-02", new Position(5, 3), target);
 
-        assertEquals(1, only(detector.detect(map, moves(a, b), new HashTable<>(), 10), AccidentCriterion.COLLISION).size());
-        assertEquals(0, only(detector.detect(map, moves(a, b), new HashTable<>(), 12), AccidentCriterion.COLLISION).size());
-        assertEquals(1, only(detector.detect(map, moves(a, b), new HashTable<>(), 15), AccidentCriterion.COLLISION).size());
+        assertEquals(1, only(detector.detect(map, moves(a, b), new HashTable<>(), 10, ALWAYS), AccidentCriterion.COLLISION).size());
+        assertEquals(0, only(detector.detect(map, moves(a, b), new HashTable<>(), 12, ALWAYS), AccidentCriterion.COLLISION).size());
+        assertEquals(1, only(detector.detect(map, moves(a, b), new HashTable<>(), 15, ALWAYS), AccidentCriterion.COLLISION).size());
     }
 
     @Test
     void aVehicleThatAlreadyCrashedIsNotCountedTwiceInTheSameMinute() {
         CityMap map = SimFixtures.map();
         Position risk = map.riskPoints().getFirst();
-        LinkedList<AccidentReport> reports = new AccidentDetector(5).detect(map, moves(
+        LinkedList<AccidentReport> reports = new AccidentDetector(5, 1.0).detect(map, moves(
                 new CarMove("CIV-01", new Position(0, 6), risk),
-                new CarMove("CIV-02", new Position(9, 6), risk)), new HashTable<>(), 10);
+                new CarMove("CIV-02", new Position(9, 6), risk)), new HashTable<>(), 10, ALWAYS);
 
         assertEquals(1, reports.size());
         assertEquals(AccidentCriterion.COLLISION, reports.getFirst().getCriterion());
+    }
+
+    @Test
+    void whenDriversYieldAConflictForTheSameCellIsNotACrash() {
+        CityMap map = SimFixtures.map();
+        Position target = new Position(4, 3);
+        LinkedList<AccidentReport> reports = new AccidentDetector(5, 0.0).detect(map, moves(
+                new CarMove("CIV-01", new Position(3, 3), target),
+                new CarMove("CIV-02", new Position(5, 3), target)), new HashTable<>(), 10, ALWAYS);
+
+        assertEquals(0, only(reports, AccidentCriterion.COLLISION).size());
     }
 
     @Test
@@ -107,9 +123,9 @@ class AccidentDetectorTest {
         HashTable<Position, Boolean> busy = new HashTable<>();
         busy.put(target, Boolean.TRUE);
 
-        LinkedList<AccidentReport> reports = new AccidentDetector(5).detect(map, moves(
+        LinkedList<AccidentReport> reports = new AccidentDetector(5, 1.0).detect(map, moves(
                 new CarMove("CIV-01", new Position(3, 3), target),
-                new CarMove("CIV-02", new Position(5, 3), target)), busy, 10);
+                new CarMove("CIV-02", new Position(5, 3), target)), busy, 10, ALWAYS);
 
         assertTrue(reports.find(r -> r.getCriterion() == AccidentCriterion.COLLISION) == null);
     }

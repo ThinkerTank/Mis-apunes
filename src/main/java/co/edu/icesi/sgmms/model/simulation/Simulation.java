@@ -32,13 +32,14 @@ public class Simulation implements Serializable {
     private final CivilianTraffic traffic;
     private final IncidentGenerator generator = new IncidentGenerator();
     private final AccidentDetector detector;
+    private String cityName = "Palmira";
 
     public Simulation(DispatchCenter center, SimulationSettings settings) {
         this.center = center;
         this.settings = settings;
         this.random = new Random(settings.getSeed());
         this.traffic = new CivilianTraffic(center.getMap(), settings.getCivilianCars(), random);
-        this.detector = new AccidentDetector(settings.getAccidentCooldownMinutes());
+        this.detector = new AccidentDetector(settings.getAccidentCooldownMinutes(), settings.getCollisionProbability());
         center.updateTraffic(traffic.positions());
     }
 
@@ -70,7 +71,7 @@ public class Simulation implements Serializable {
         }
         LinkedList<AccidentReport> accidents = new LinkedList<>();
         if (center.indicators().getActiveIncidents() < settings.getMaxActiveIncidents()) {
-            accidents = detector.detect(map, moves, busyCells(), center.currentMinute());
+            accidents = detector.detect(map, moves, busyCells(), center.currentMinute(), random);
             for (AccidentReport accident : accidents) {
                 center.reportIncident(IncidentType.ACCIDENT, accident.getPosition(),
                         accident.getCriterion().getSeverity(), accident.description());
@@ -95,6 +96,15 @@ public class Simulation implements Serializable {
     /** Current positions of the private cars, for drawing them. Complexity — O(c). */
     public synchronized LinkedList<Position> civilianPositions() {
         return traffic.positions();
+    }
+
+    /** Name of the city shown in the header. */
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public DispatchCenter getCenter() {
