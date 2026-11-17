@@ -20,3 +20,4 @@ Fórmulas: densidad de errores-fallos = total de fallos / total de pruebas; conf
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | `ddb4b080faf8d1cbbd0bf2309301325492a03e02` | LinkedList, Stack, Queue | 17 | 0 | 0.0000 | 1.0000 | 0.49 |
 | 2 | `a7af55f2a1627041b7611ef61a0175dde9764928` | HashTable | 23 | 0 | 0.0000 | 1.0000 | 0.66 |
+| 3 | `92801d664c486b24033c86765a9af1068049ab65` | PriorityQueue, BinarySearchTree | 36 | 0 | 0.0000 | 1.0000 | 1.03 |
