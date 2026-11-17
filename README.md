@@ -31,3 +31,4 @@ Fórmulas: densidad de errores-fallos = total de fallos / total de pruebas; conf
 | 11 | `f089350721db1a5bccb968902642c1b2f62c6b6b` | Prueba de reglas técnicas RT1 y RT5 (detecta 21 clases sin Javadoc de complejidad) | 142 | 1 | 0.0070 | 0.9930 | 4.06 |
 | 12 | `c451c27d1d6a0883658ae1e0b5fa7798960f001a` | Javadoc de complejidad en todas las clases (corrige la falla de la iteración 11) | 142 | 0 | 0.0000 | 1.0000 | 4.06 |
 | 13 | `74449a96034078fc32c79ffafd628745f6b5edc6` | Documentación: TAD, complejidad, método de la ingeniería | 142 | 0 | 0.0000 | 1.0000 | 4.06 |
+| 14 | `4fe74a55724e7e8c37dd69f18c3f8dba72d39e0e` | Documentación: especificación, historias, casos de prueba, diseño, PESTLE, UML | 142 | 0 | 0.0000 | 1.0000 | 4.06 |
