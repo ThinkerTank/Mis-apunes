@@ -35,7 +35,7 @@ public class IncidentRepository implements Serializable {
      */
     public void add(Incident incident) {
         if (byId.containsKey(incident.getId())) {
-            throw new IllegalArgumentException("Duplicate incident id " + incident.getId());
+            throw new IllegalArgumentException("El id de incidente " + incident.getId() + " está repetido");
         }
         byPriority.insert(incident);
         byId.put(incident.getId(), incident);
@@ -51,7 +51,7 @@ public class IncidentRepository implements Serializable {
     public Incident findById(String id) {
         Incident incident = byId.get(id);
         if (incident == null) {
-            throw new IncidentNotFoundException("There is no active incident with id " + id);
+            throw new IncidentNotFoundException("No existe un incidente activo con id " + id);
         }
         return incident;
     }

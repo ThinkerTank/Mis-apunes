@@ -6,6 +6,6 @@ public class VertexNotFoundException extends SgmmsException {
     private static final long serialVersionUID = 1L;
 
     public VertexNotFoundException(Object vertex) {
-        super("The vertex " + vertex + " does not exist in the graph");
+        super("El vértice " + vertex + " no existe en el grafo");
     }
 }

@@ -235,7 +235,7 @@ public class HashTable<K, V> implements Serializable {
 
     private static void requireKey(Object key) {
         if (key == null) {
-            throw new IllegalArgumentException("Hash table keys cannot be null");
+            throw new IllegalArgumentException("Las claves de la tabla hash no pueden ser nulas");
         }
     }
 }

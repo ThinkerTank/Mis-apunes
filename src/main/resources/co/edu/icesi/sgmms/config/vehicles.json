@@ -1,0 +1,13 @@
+{
+  "vehicles": [
+    {"id": "P-01", "type": "PATROL", "x": 3, "y": 0},
+    {"id": "P-02", "type": "PATROL", "x": 19, "y": 5},
+    {"id": "P-03", "type": "PATROL", "x": 7, "y": 12},
+    {"id": "P-04", "type": "PATROL", "x": 15, "y": 15},
+    {"id": "A-01", "type": "AMBULANCE", "x": 11, "y": 5},
+    {"id": "A-02", "type": "AMBULANCE", "x": 0, "y": 10},
+    {"id": "A-03", "type": "AMBULANCE", "x": 23, "y": 12},
+    {"id": "B-01", "type": "FIRE_TRUCK", "x": 7, "y": 4},
+    {"id": "B-02", "type": "FIRE_TRUCK", "x": 18, "y": 10}
+  ]
+}

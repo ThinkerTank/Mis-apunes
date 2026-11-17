@@ -97,7 +97,7 @@ public class BinarySearchTree<T> implements Serializable {
      */
     public T max() {
         if (root == null) {
-            throw new EmptyStructureException("The tree is empty");
+            throw new EmptyStructureException("El árbol está vacío");
         }
         TreeNode<T> current = root;
         while (current.right != null) {
@@ -115,7 +115,7 @@ public class BinarySearchTree<T> implements Serializable {
      */
     public T min() {
         if (root == null) {
-            throw new EmptyStructureException("The tree is empty");
+            throw new EmptyStructureException("El árbol está vacío");
         }
         TreeNode<T> current = root;
         while (current.left != null) {

@@ -63,15 +63,15 @@ public class CityMap implements Serializable {
      */
     public CityMap(int[][] grid, Position monitoringCenter, MapSettings settings) {
         if (grid == null || grid.length == 0 || grid[0].length == 0) {
-            throw new InvalidMapException("The map grid is empty");
+            throw new InvalidMapException("La cuadrícula del mapa está vacía");
         }
         this.height = grid.length;
         this.width = grid[0].length;
         this.cells = new int[height][width];
         for (int y = 0; y < height; y++) {
             if (grid[y].length != width) {
-                throw new InvalidMapException("Row " + y + " has " + grid[y].length
-                        + " cells but row 0 has " + width + "; the grid must be rectangular");
+                throw new InvalidMapException("La fila " + y + " tiene " + grid[y].length
+                        + " celdas pero la fila 0 tiene " + width + "; la cuadrícula debe ser rectangular");
             }
             for (int x = 0; x < width; x++) {
                 cells[y][x] = ZoneType.fromCode(grid[y][x]).getCode();
@@ -80,8 +80,8 @@ public class CityMap implements Serializable {
         this.settings = settings;
         validateSettings(settings);
         if (!isInside(monitoringCenter) || !canEnter(monitoringCenter)) {
-            throw new InvalidMapException("The monitoring center " + monitoringCenter
-                    + " must be on a traversable cell inside the map");
+            throw new InvalidMapException("El centro de monitoreo " + monitoringCenter
+                    + " debe estar en una celda transitable dentro del mapa");
         }
         this.monitoringCenter = monitoringCenter;
         this.congestion = new int[districtCount()];
@@ -115,7 +115,7 @@ public class CityMap implements Serializable {
     /** Zone of a cell. Complexity — O(1). */
     public ZoneType zoneAt(Position p) {
         if (!isInside(p)) {
-            throw new IllegalArgumentException(p + " is outside the map");
+            throw new IllegalArgumentException(p + " está fuera del mapa");
         }
         return ZoneType.fromCode(cells[p.getY()][p.getX()]);
     }
@@ -216,7 +216,7 @@ public class CityMap implements Serializable {
      */
     public void applyCongestion(int[] vehiclesPerDistrict) {
         if (vehiclesPerDistrict.length != congestion.length) {
-            throw new IllegalArgumentException("Expected " + congestion.length + " district counts");
+            throw new IllegalArgumentException("Se esperaban " + congestion.length + " conteos de distrito");
         }
         congestion = vehiclesPerDistrict.clone();
         for (Edge<Position> edge : baseRoads.edges()) {
@@ -241,7 +241,7 @@ public class CityMap implements Serializable {
     public void blockRoad(Position a, Position b) {
         requireSegment(a, b);
         if (isBlocked(a, b)) {
-            throw new InvalidMapException("The road " + a + " - " + b + " is already blocked");
+            throw new InvalidMapException("La vía " + a + " - " + b + " ya está bloqueada");
         }
         baseRoads.removeEdge(a, b);
         trafficRoads.removeEdge(a, b);
@@ -261,7 +261,7 @@ public class CityMap implements Serializable {
         requireSegment(a, b);
         Edge<Position> edge = findBlocked(a, b);
         if (edge == null) {
-            throw new InvalidMapException("The road " + a + " - " + b + " is not blocked");
+            throw new InvalidMapException("La vía " + a + " - " + b + " no está bloqueada");
         }
         blocked.remove(edge);
         baseRoads.addEdge(a, b, baseWeight(a, b));
@@ -293,11 +293,11 @@ public class CityMap implements Serializable {
         BfsResult<Position> bfs = baseRoads.bfs(monitoringCenter);
         LinkedList<Position> disconnected = bfs.unreachable().filter(p -> zoneAt(p).isZone());
         if (!disconnected.isEmpty()) {
-            StringBuilder message = new StringBuilder("Unreachable zones from the monitoring center: ");
+            StringBuilder message = new StringBuilder("Zonas inalcanzables desde el centro de monitoreo: ");
             int shown = 0;
             for (Position p : disconnected) {
                 if (shown++ == 8) {
-                    message.append("... (").append(disconnected.size()).append(" cells in total)");
+                    message.append("... (").append(disconnected.size()).append(" celdas en total)");
                     break;
                 }
                 message.append(p).append(' ').append(zoneAt(p).getLabel()).append("; ");
@@ -343,10 +343,11 @@ public class CityMap implements Serializable {
     }
 
     /**
-     * Risk points: intersections where vehicle routes converge. A vertex is a risk point when DFS
-     * finds that it closes a cycle (several alternative routes meet there), it has at least three
-     * open segments, and it is on or next to a main road, where traffic concentrates. Recomputed
-     * only when the topology changes.
+     * Risk points: intersections where vehicle routes converge. Traffic concentrates on the main
+     * roads, so the analysis runs DFS on the subgraph of open main-road segments: a vertex is a
+     * risk point when it closes a cycle of that network (alternative routes meet there) and at
+     * least three main-road segments leave it (a real crossing, not a curve). Recomputed only when
+     * the topology changes.
      *
      * <p>Complexity — time: O(V + E) when recomputed, O(1) otherwise; space: O(V).
      */
@@ -367,28 +368,24 @@ public class CityMap implements Serializable {
         if (riskPoints != null && riskVersion == topologyVersion) {
             return;
         }
+        AdjacencyListGraph<Position> mainNetwork = new AdjacencyListGraph<>();
+        for (Position p : cellsOf(ZoneType.MAIN_ROAD)) {
+            mainNetwork.addVertex(p);
+        }
+        for (Edge<Position> edge : baseRoads.edges()) {
+            if (zoneAt(edge.getFrom()) == ZoneType.MAIN_ROAD && zoneAt(edge.getTo()) == ZoneType.MAIN_ROAD) {
+                mainNetwork.addEdge(edge.getFrom(), edge.getTo(), edge.getWeight());
+            }
+        }
         riskPoints = new LinkedList<>();
         riskLookup = new HashTable<>();
-        for (Position p : structuralAnalysis().cycleVertices()) {
-            if (baseRoads.getAdjacent(p).size() >= 3 && nearMainRoad(p)) {
+        for (Position p : mainNetwork.dfs().cycleVertices()) {
+            if (mainNetwork.getAdjacent(p).size() >= 3) {
                 riskPoints.addLast(p);
                 riskLookup.put(p, Boolean.TRUE);
             }
         }
         riskVersion = topologyVersion;
-    }
-
-    private boolean nearMainRoad(Position p) {
-        if (zoneAt(p) == ZoneType.MAIN_ROAD) {
-            return true;
-        }
-        for (Direction d : Direction.values()) {
-            Position q = p.step(d);
-            if (isInside(q) && zoneAt(q) == ZoneType.MAIN_ROAD) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void buildGraphs() {
@@ -432,7 +429,7 @@ public class CityMap implements Serializable {
 
     private void requireSegment(Position a, Position b) {
         if (!canEnter(a) || !canEnter(b) || !a.isAdjacentTo(b)) {
-            throw new InvalidMapException("There is no road segment between " + a + " and " + b);
+            throw new InvalidMapException("No hay un tramo de vía entre " + a + " y " + b);
         }
     }
 
@@ -443,11 +440,11 @@ public class CityMap implements Serializable {
 
     private static void validateSettings(MapSettings s) {
         if (s == null) {
-            throw new InvalidMapException("Missing map settings");
+            throw new InvalidMapException("Faltan los parámetros del mapa");
         }
         if (s.getBaseDistance() <= 0 || s.getCongestionStep() < 0 || s.getZoneCapacity() < 1 || s.getDistrictSize() < 1) {
-            throw new InvalidMapException("Map settings must be positive (base distance > 0, congestion step >= 0, "
-                    + "zone capacity >= 1, district size >= 1)");
+            throw new InvalidMapException("Los parámetros del mapa deben ser positivos (distancia base > 0, paso de congestión >= 0, "
+                    + "capacidad de zona >= 1, tamaño de distrito >= 1)");
         }
     }
 

@@ -7,11 +7,11 @@ public class SimulationSettings implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private double robberyProbability = 0.10;
-    private double fireProbability = 0.05;
+    private double robberyProbability = 0.06;
+    private double fireProbability = 0.03;
     private int civilianCars = 16;
     private int maxActiveIncidents = 12;
-    private int accidentCooldownMinutes = 6;
+    private int accidentCooldownMinutes = 8;
     private long seed = System.nanoTime();
 
     /** Probability that a robbery appears in a given simulated minute. */

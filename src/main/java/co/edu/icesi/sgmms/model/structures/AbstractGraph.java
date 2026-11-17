@@ -79,7 +79,7 @@ public abstract class AbstractGraph<T> implements IGraph<T>, Serializable {
     @Override
     public boolean addVertex(T vertex) {
         if (vertex == null) {
-            throw new IllegalArgumentException("Vertices cannot be null");
+            throw new IllegalArgumentException("Los vértices no pueden ser nulos");
         }
         if (indexOf.containsKey(vertex)) {
             return false;
@@ -109,7 +109,7 @@ public abstract class AbstractGraph<T> implements IGraph<T>, Serializable {
         int u = index(a);
         int v = index(b);
         if (u == v) {
-            throw new IllegalArgumentException("Self loops are not allowed: " + a);
+            throw new IllegalArgumentException("No se permiten lazos sobre un mismo vértice: " + a);
         }
         if (weightInternal(u, v) != Double.POSITIVE_INFINITY) {
             setWeightInternal(u, v, weight);
@@ -137,7 +137,7 @@ public abstract class AbstractGraph<T> implements IGraph<T>, Serializable {
         int u = index(a);
         int v = index(b);
         if (weightInternal(u, v) == Double.POSITIVE_INFINITY) {
-            throw new IllegalArgumentException("There is no edge between " + a + " and " + b);
+            throw new IllegalArgumentException("No hay arista entre " + a + " y " + b);
         }
         setWeightInternal(u, v, weight);
     }
@@ -522,7 +522,7 @@ public abstract class AbstractGraph<T> implements IGraph<T>, Serializable {
 
     private static void validateWeight(double weight) {
         if (weight < 0 || Double.isNaN(weight) || Double.isInfinite(weight)) {
-            throw new IllegalArgumentException("Edge weights must be finite and non-negative: " + weight);
+            throw new IllegalArgumentException("Los pesos deben ser finitos y no negativos: " + weight);
         }
     }
 }
