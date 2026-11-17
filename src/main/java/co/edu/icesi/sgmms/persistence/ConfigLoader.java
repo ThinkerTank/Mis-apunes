@@ -151,6 +151,9 @@ public final class ConfigLoader {
         if (sim.has("fireProbability")) {
             settings.setFireProbability(probability(sim, "fireProbability", where));
         }
+        if (sim.has("collisionProbability")) {
+            settings.setCollisionProbability(probability(sim, "collisionProbability", where));
+        }
         if (sim.has("civilianCars")) {
             settings.setCivilianCars(nonNegative(sim, "civilianCars", where));
         }

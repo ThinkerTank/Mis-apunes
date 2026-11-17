@@ -1,0 +1,342 @@
+/* SGMMS - shared look of the three scenarios */
+
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", "Liberation Sans", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-base: #f1f5f9;
+    -fx-accent: #2563eb;
+    -fx-focus-color: #2563eb;
+    -fx-faint-focus-color: transparent;
+}
+
+.app-root {
+    -fx-background-color: #eef2f7;
+}
+
+/* ---------------------------------------------------------------- header */
+
+.header {
+    -fx-background-color: linear-gradient(to right, #0f172a, #1e293b);
+    -fx-padding: 12 20 12 20;
+}
+
+.app-title {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.app-subtitle {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 12px;
+}
+
+.header-caption {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.header-value {
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.header-score {
+    -fx-text-fill: #facc15;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.run-button {
+    -fx-background-color: #22c55e;
+    -fx-text-fill: #052e16;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.run-button:hover {
+    -fx-background-color: #4ade80;
+}
+
+.speed-box, .file-menu {
+    -fx-background-color: #334155;
+    -fx-background-radius: 6;
+}
+
+.speed-box .list-cell, .file-menu > .label {
+    -fx-text-fill: #e2e8f0;
+}
+
+/* ---------------------------------------------------------------- navigation */
+
+.nav-bar {
+    -fx-background-color: #1e293b;
+    -fx-padding: 0 16 0 16;
+}
+
+.nav-tab {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-cursor: hand;
+}
+
+.nav-tab:hover {
+    -fx-text-fill: #ffffff;
+}
+
+.nav-tab:selected {
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent transparent #38bdf8 transparent;
+}
+
+/* ---------------------------------------------------------------- screens */
+
+.content {
+    -fx-background-color: #eef2f7;
+}
+
+.screen-scroll, .side-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #eef2f7;
+}
+
+.screen {
+    -fx-padding: 18 20 18 20;
+}
+
+.screen-header {
+    -fx-padding: 0 0 12 0;
+}
+
+.screen-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.screen-subtitle {
+    -fx-text-fill: #64748b;
+}
+
+.card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-padding: 14;
+}
+
+.card-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.field-caption {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.field-value {
+    -fx-text-fill: #1e293b;
+}
+
+.muted {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 12px;
+}
+
+.suggestion {
+    -fx-text-fill: #1d4ed8;
+    -fx-font-weight: bold;
+}
+
+/* indicator cards of the monitoring center */
+
+.indicator-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-width: 0 0 0 5;
+    -fx-border-radius: 10 0 0 10;
+    -fx-padding: 12 18 12 16;
+    -fx-min-width: 170;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 8, 0, 0, 2);
+}
+
+.card-caption {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.card-value {
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.grid-header {
+    -fx-text-fill: #475569;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.grid-cell {
+    -fx-text-fill: #0f172a;
+}
+
+.activity-list .list-cell {
+    -fx-font-family: "Consolas", "DejaVu Sans Mono", monospace;
+    -fx-font-size: 12px;
+}
+
+/* summary cards of the incident panel */
+
+.summary-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-padding: 10 14 10 14;
+}
+
+.urgent-card {
+    -fx-border-color: #fca5a5;
+    -fx-background-color: #fff7f7;
+}
+
+.summary-caption {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.summary-value {
+    -fx-text-fill: #0f172a;
+    -fx-font-weight: bold;
+}
+
+.panel-split {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.panel-left {
+    -fx-padding: 0 12 0 0;
+}
+
+.side-panel {
+    -fx-padding: 0 4 0 12;
+}
+
+/* map */
+
+.map-holder {
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 10;
+}
+
+.legend-text {
+    -fx-text-fill: #334155;
+    -fx-font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.primary-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+.secondary-button {
+    -fx-background-color: #e2e8f0;
+    -fx-text-fill: #0f172a;
+    -fx-background-radius: 6;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover, .secondary-button:selected {
+    -fx-background-color: #cbd5e1;
+}
+
+.success-button {
+    -fx-background-color: #16a34a;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.success-button:hover {
+    -fx-background-color: #15803d;
+}
+
+.link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2563eb;
+    -fx-underline: true;
+    -fx-padding: 4 2 4 2;
+    -fx-cursor: hand;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+/* ---------------------------------------------------------------- status bar */
+
+.status-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0 transparent transparent transparent;
+    -fx-padding: 8 18 8 18;
+    -fx-min-height: 34;
+}
+
+.status-text {
+    -fx-font-size: 13px;
+}
+
+.status-ok {
+    -fx-text-fill: #166534;
+}
+
+.status-error {
+    -fx-text-fill: #b91c1c;
+    -fx-font-weight: bold;
+}
+
+/* tables */
+
+.table-view {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #dbeafe;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: #0f172a;
+}

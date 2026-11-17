@@ -27,9 +27,10 @@
   },
   "zones": {"districtSize": 6, "zoneCapacity": 4},
   "simulation": {
-    "robberyProbability": 0.06,
-    "fireProbability": 0.03,
-    "civilianCars": 16,
+    "robberyProbability": 0.05,
+    "fireProbability": 0.025,
+    "collisionProbability": 0.20,
+    "civilianCars": 14,
     "maxActiveIncidents": 12,
     "accidentCooldownMinutes": 8
   }
