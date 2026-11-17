@@ -19,11 +19,16 @@ public class Movement implements Serializable {
         this.minute = minute;
     }
 
-    /** Position before the step; undo restores it. */
+    /**
+     * Position before the step; undo restores it.
+     *
+     * <p>Complexity — time O(1), space O(1).
+     */
     public Position getFrom() {
         return from;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public Position getTo() {
         return to;
     }

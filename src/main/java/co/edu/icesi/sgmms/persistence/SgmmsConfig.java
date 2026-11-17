@@ -21,7 +21,11 @@ public final class SgmmsConfig {
         this.settings = settings;
     }
 
-    /** Builds a fresh simulation from this configuration. */
+    /**
+     * Builds a fresh simulation from this configuration.
+     *
+     * <p>Complexity — time O(V + E + c): places c private cars and applies the first congestion update over every road segment; space O(c).
+     */
     public Simulation createSimulation() {
         Simulation simulation = new Simulation(new DispatchCenter(map, vehicles), settings);
         simulation.setCityName(cityName);
@@ -32,6 +36,7 @@ public final class SgmmsConfig {
         return cityName;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public CityMap getMap() {
         return map;
     }

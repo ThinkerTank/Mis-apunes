@@ -31,14 +31,17 @@ public final class Indicators {
         this.resolvedIncidents = resolvedIncidents;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public long getMinute() {
         return minute;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public int getScore() {
         return score;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public int getActiveIncidents() {
         return activeIncidents;
     }

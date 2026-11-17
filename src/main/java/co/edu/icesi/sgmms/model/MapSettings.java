@@ -39,6 +39,7 @@ public class MapSettings implements Serializable {
         }
     }
 
+    /** Complexity — time O(1), space O(1). */
     public double getBaseDistance() {
         return baseDistance;
     }
@@ -47,6 +48,7 @@ public class MapSettings implements Serializable {
         this.baseDistance = baseDistance;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public double getCongestionStep() {
         return congestionStep;
     }

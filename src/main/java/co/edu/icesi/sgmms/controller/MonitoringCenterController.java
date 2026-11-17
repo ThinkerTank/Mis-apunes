@@ -41,6 +41,7 @@ public class MonitoringCenterController implements ScreenController {
     private Label vehiclesValue;
     private Label resolvedValue;
 
+    /** Complexity — time O(1): builds seven indicator cards; space O(1). */
     @Override
     public void init(AppContext appContext) {
         this.context = appContext;
@@ -60,6 +61,7 @@ public class MonitoringCenterController implements ScreenController {
         // nothing to prepare: the screen is fully rebuilt by refresh()
     }
 
+    /** Complexity — time O(n + m + V + E): indicator snapshot O(n + m), BFS coverage and DFS components O(V + E), response time per zone O(1) each from the Floyd-Warshall matrix; space O(V). */
     @Override
     public void refresh() {
         DispatchCenter center = context.center();

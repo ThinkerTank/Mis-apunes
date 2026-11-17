@@ -22,7 +22,11 @@ public final class Palette {
     private Palette() {
     }
 
-    /** Fill color of a cell. */
+    /**
+     * Fill color of a cell.
+     *
+     * <p>Complexity — time O(1), space O(1).
+     */
     public static Color zone(ZoneType zone) {
         switch (zone) {
             case OBSTACLE:
@@ -38,7 +42,11 @@ public final class Palette {
         }
     }
 
-    /** Marker color of an incident type. */
+    /**
+     * Marker color of an incident type.
+     *
+     * <p>Complexity — time O(1), space O(1).
+     */
     public static Color incident(IncidentType type) {
         switch (type) {
             case ACCIDENT:

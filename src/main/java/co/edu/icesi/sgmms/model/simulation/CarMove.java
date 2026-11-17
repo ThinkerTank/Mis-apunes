@@ -19,6 +19,7 @@ public final class CarMove {
         return vehicleId;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public Position getFrom() {
         return from;
     }
@@ -27,7 +28,11 @@ public final class CarMove {
         return to;
     }
 
-    /** Whether the vehicle actually changed cell. */
+    /**
+     * Whether the vehicle actually changed cell.
+     *
+     * <p>Complexity — time O(1), space O(1).
+     */
     public boolean moved() {
         return !from.equals(to);
     }

@@ -30,10 +30,12 @@ public class ZoneCoverage implements Serializable {
         return cells;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public double getAverageHops() {
         return averageHops;
     }
 
+    /** Complexity — time O(1), space O(1). */
     public int getMaxHops() {
         return maxHops;
     }

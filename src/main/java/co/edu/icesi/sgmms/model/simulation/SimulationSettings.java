@@ -15,7 +15,11 @@ public class SimulationSettings implements Serializable {
     private double collisionProbability = 0.20;
     private long seed = System.nanoTime();
 
-    /** Probability that a robbery appears in a given simulated minute. */
+    /**
+     * Probability that a robbery appears in a given simulated minute.
+     *
+     * <p>Complexity — time O(1), space O(1).
+     */
     public double getRobberyProbability() {
         return robberyProbability;
     }
@@ -24,7 +28,11 @@ public class SimulationSettings implements Serializable {
         this.robberyProbability = robberyProbability;
     }
 
-    /** Probability that a fire appears in a given simulated minute. */
+    /**
+     * Probability that a fire appears in a given simulated minute.
+     *
+     * <p>Complexity — time O(1), space O(1).
+     */
     public double getFireProbability() {
         return fireProbability;
     }

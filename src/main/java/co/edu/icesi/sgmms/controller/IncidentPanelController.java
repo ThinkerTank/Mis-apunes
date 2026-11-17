@@ -90,6 +90,7 @@ public class IncidentPanelController implements ScreenController {
     private AppContext context;
     private String selectedId;
 
+    /** Complexity — time O(1): configures a fixed number of columns and lists; space O(1). */
     @Override
     public void init(AppContext appContext) {
         this.context = appContext;
@@ -152,6 +153,7 @@ public class IncidentPanelController implements ScreenController {
         // the panel is rebuilt by refresh()
     }
 
+    /** Complexity — time O(n + m + r + k) for n active incidents, m vehicles, r resolved incidents and k actions, plus O(m log m) for the vehicle suggestion; space O(n + m + r + k) for the table rows. */
     @Override
     public void refresh() {
         if (incidentTable.getScene() == null) {

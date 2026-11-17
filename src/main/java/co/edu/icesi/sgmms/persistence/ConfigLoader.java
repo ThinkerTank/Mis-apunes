@@ -45,6 +45,8 @@ public final class ConfigLoader {
      * Loads the configuration bundled with the application.
      *
      * @throws ConfigurationException if a bundled file is missing or invalid
+     *
+     * <p>Complexity — time O(n + V²) for n characters of JSON and the V² adjacency matrix of the map; space O(n + V²).
      */
     public static SgmmsConfig loadDefault() throws ConfigurationException {
         return parse(readResource(DEFAULT_CITY), readResource(DEFAULT_VEHICLES));
@@ -54,6 +56,8 @@ public final class ConfigLoader {
      * Loads the configuration from two files chosen by the user.
      *
      * @throws ConfigurationException if a file is missing, unreadable or invalid
+     *
+     * <p>Complexity — time O(n + V²) for n characters of JSON and the V² adjacency matrix of the map; space O(n + V²).
      */
     public static SgmmsConfig load(Path cityFile, Path vehiclesFile) throws ConfigurationException {
         return parse(read(cityFile), read(vehiclesFile));
