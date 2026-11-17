@@ -12,6 +12,88 @@ Tarea integradora 2026-2 de los cursos Algoritmos y Programación II, Computaci�
 | _(pendiente)_ | _(pendiente)_ |
 | _(pendiente)_ | _(pendiente)_ |
 
+## Requisitos para ejecutar
+
+- JDK 17 o superior
+- Maven 3.8 o superior (descarga JavaFX 17 y JUnit 5 automáticamente)
+
+## Cómo ejecutar
+
+```bash
+mvn javafx:run     # abre la aplicación con la configuración de Palmira
+mvn test           # corre las 142 pruebas unitarias
+```
+
+**IntelliJ IDEA:** abrir la carpeta del proyecto como proyecto Maven y ejecutar `mvn javafx:run` desde la ventana Maven (Plugins › javafx › javafx:run). No hace falta configurar JavaFX a mano.
+
+## Uso
+
+La ventana tiene un encabezado con el reloj de simulación, el puntaje del operador, el botón Iniciar / Pausar, la velocidad del reloj y los botones para cambiar de escenario. La simulación arranca en pausa: pulse **Iniciar** para que corra el tiempo (en pausa se puede seguir asignando y resolviendo).
+
+| Escenario | Qué se hace allí |
+| --- | --- |
+| **Centro de Monitoreo** | Indicadores en tiempo real (incidentes activos por tipo, vehículos disponibles, puntaje), incidente más grave (BST), siguiente en la cola de prioridad y en la cola de despacho, estado de la red vial (componentes, incidentes aislados, puntos de riesgo, tiempo de Floyd-Warshall), cobertura y tiempo de respuesta por zona, actividad reciente |
+| **Mapa de Tráfico** | Mapa 2D de Palmira con capas activables: rutas de los vehículos (Dijkstra), carros particulares, puntos de riesgo (DFS) y corredores de emergencia (MST, Prim o Kruskal). Modo para bloquear y reabrir tramos de vía. Clic en una celda para ver su contenido |
+| **Panel de Incidentes** | Tabla de incidentes activos por prioridad, registrar un incidente manual, consultar por ID, vehículo sugerido, asignar, *Atender siguiente*, resolver, historial de acciones, gestión de la flota e incidentes resueltos |
+
+**Controles del operador (Mapa de Tráfico):** `W` `A` `S` `D` o flechas para moverse, `U` para deshacer el último movimiento.
+
+**Menú Archivo:** nueva simulación con la configuración de Palmira, cargar configuración JSON (`city.json` + `vehicles.json`), guardar y cargar una partida (`.sgmms`).
+
+Las configuraciones de ejemplo están en `src/main/resources/co/edu/icesi/sgmms/config/`.
+
+## Arquitectura
+
+```
+co.edu.icesi.sgmms
+├── model/structures    LinkedList, Stack, Queue, HashTable, PriorityQueue (heap), BinarySearchTree,
+│                       UnionFind, IGraph → AbstractGraph → AdjacencyListGraph | AdjacencyMatrixGraph
+├── model               CityMap, DispatchCenter (fachada sincronizada), RouteService, ScoreCalculator,
+│                       repositorios de incidentes y vehículos, navegador del operador, enumeraciones
+├── model/exceptions    SgmmsException y 11 excepciones de dominio
+├── model/simulation    tráfico particular, generador de incidentes, detector de accidentes, motor de 3 hilos
+├── persistence         parser JSON propio, carga de configuración, serialización de partidas
+├── controller          un controlador por escenario + AppContext
+└── view                MapRenderer (Canvas), FXML y CSS en resources
+```
+
+Todas las colecciones del modelo son estructuras propias; no se usa ninguna colección de `java.util` (una prueba lo verifica). Detalles en [doc/diseno.md](doc/diseno.md).
+
+## Cumplimiento del enunciado
+
+| Requisito | Dónde |
+| --- | --- |
+| RF1–RF20 (generales) | Ver la tabla de requerimientos en [doc/especificacion.md](doc/especificacion.md) |
+| Pilas: movimientos (RF21) y acciones (RF22) | `OperatorNavigator`, `DispatchCenter.actions` |
+| Colas: despacho (RF23) y eventos (RF24) | `DispatchCenter.dispatchQueue`, `DispatchCenter.events` |
+| Tablas hash: vehículos (RF25) e incidentes (RF26) | `VehicleRepository`, `IncidentRepository` |
+| Heap de atención (RF27) y vehículo candidato (RF28) | `DispatchCenter.attentionQueue`, `suggestVehicle` |
+| Mapa como grafo, dos representaciones (RF29) | `CityMap`, `AdjacencyListGraph`, `AdjacencyMatrixGraph` |
+| BFS de conectividad (RF30), DFS de componentes y ciclos (RF31) | `CityMap`, `DispatchCenter.connectedComponents`, `riskPoints` |
+| Dijkstra (RF32), Floyd-Warshall (RF33), Prim y Kruskal (RF34) | `AbstractGraph`, `RouteService` |
+| Estrategia de puntaje basada en grafos (RF35) | `ScoreCalculator` |
+| JSON y serialización | `ConfigLoader`, `SimulationRepository` |
+| Concurrencia | `SimulationEngine` (hilos reloj, generador e indicadores) |
+| Pruebas unitarias | `src/test/java` — [reporte](doc/reporte-pruebas.md) |
+
+## Documentación
+
+| Documento | Contenido |
+| --- | --- |
+| [especificacion.md](doc/especificacion.md) | Requerimientos funcionales y no funcionales, historias de usuario, diseño de casos de prueba |
+| [diseno.md](doc/diseno.md) | Arquitectura MVC, criterios de accidente, puntuación, JSON vs serialización, excepciones, concurrencia |
+| [tad-estructuras.md](doc/tad-estructuras.md) | TAD de las estructuras propias |
+| [tad-grafo.md](doc/tad-grafo.md) | TAD del grafo y modelado del mapa |
+| [analisis-complejidad.md](doc/analisis-complejidad.md) | Complejidad temporal y espacial, comparaciones medidas (BST vs heap, Dijkstra vs Floyd-Warshall, Prim vs Kruskal) |
+| [metodo-ingenieria.md](doc/metodo-ingenieria.md) | Método de la ingeniería: problema, alternativas, criterios y selección |
+| [pestle.md](doc/pestle.md) | Análisis PESTLE y consideraciones éticas |
+| [reporte-pruebas.md](doc/reporte-pruebas.md) | Resultados de la suite de pruebas |
+| [uml/](doc/uml/README.md) | Diagramas de clases, casos de uso y secuencia (PlantUML, PNG, SVG, PDF) |
+
+## Flujo de trabajo (gitflow)
+
+`main` guarda las versiones entregadas; `develop` integra el trabajo; cada funcionalidad se desarrolla en una rama `feat/*` o `docs/*` y se integra a `develop` con un merge sin fast-forward. Tras cada integración se corren las pruebas y se registra una fila en la tabla de indicadores.
+
 ## Indicadores de calidad
 
 Fórmulas: densidad de errores-fallos = total de fallos / total de pruebas; confiabilidad = 1 − densidad; completitud = casos de prueba / total de funcionalidades (35).
