@@ -26,3 +26,4 @@ Fórmulas: densidad de errores-fallos = total de fallos / total de pruebas; conf
 | 6 | `e05d80443ce31e30bf1187b5518a3008fe2ce081` | Despacho, asignación validada, Dijkstra, Floyd-Warshall, puntaje | 108 | 0 | 0.0000 | 1.0000 | 3.09 |
 | 7 | `83a29aa56c05fba352215a94ad5bf077672042c9` | Generación de incidentes, tráfico civil, 3 criterios de accidente | 122 | 0 | 0.0000 | 1.0000 | 3.49 |
 | 8 | `148adcb8aa0bbf848fa6067d8bcf82a24f5906e2` | Configuración JSON (parser propio y validación) | 133 | 0 | 0.0000 | 1.0000 | 3.80 |
+| 9 | `83e03921c8f8e1a9acb23da86e710b29fc7030de` | Serialización y concurrencia (3 hilos) | 139 | 0 | 0.0000 | 1.0000 | 3.97 |
